@@ -1,0 +1,68 @@
+#editor{
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	width: calc(100%/3);
+	height: 80%;
+}
+
+#game-div{
+	position: absolute;
+	top: 0;
+	left: calc(100%/3);
+	width: calc(100%/3);
+	height: 100%;
+	background:#B22E20;
+	display: flex;
+}
+
+canvas{
+	image-rendering:optimizeSpeed;              /* Legal fallback                 */
+	image-rendering:-moz-crisp-edges;           /* Firefox                        */
+	image-rendering:-o-crisp-edges;             /* Opera                          */
+	image-rendering:-webkit-optimize-contrast;  /* Chrome (and eventually Safari) */
+	image-rendering:crisp-edges;                /* CSS3 Proposed                  */
+	-ms-interpolation-mode:bicubic;             /* IE8+                           */
+	margin: auto;
+	display: block;
+}
+
+#buttonPanel{
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	height: 20%;
+	width: calc(100%/3);
+	background:#1F1F1F;
+}
+
+#info-div{
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	height: 100%;
+	background: white;
+	width: calc(100%/3);
+}
+
+#info-div #tabs{
+	top: 0;
+	height: 5%
+}
+
+#info-div #content{
+	padding: 0;
+	margin: 0;
+	bottom: 0;
+	height: 95%;
+	background:#FFDB58;
+	overflow: auto;
+}
+
+.myMarker {
+  position:absolute;
+  background:rgba(100,200,100,0.5);
+  z-index:20
+}

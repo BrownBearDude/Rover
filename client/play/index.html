@@ -1,0 +1,36 @@
+<html>
+	<head>
+		<script src="/lib/p5.min.js"></script>
+		<script src="/lib/acorn.js"></script>
+		<script src="/lib/interpreter.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.4/ace.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+		<script src="world.js"></script>
+		<script src="index.js"></script>
+		<link rel="stylesheet" type="text/css" href="index.css">
+		<link>
+	</head>
+	<body>
+	
+<div id="editor">//Code here excecutes once
+
+while(true){
+	//Code in here loops forever
+}</div>
+		<div id="game-div"></div>
+		<div id="buttonPanel">
+			<button id="runButton" onclick="world.loadCode(editor.getValue())">Run!</button>
+		</div>
+		<div id="info-div">
+			<div id="tabs"></div>
+			<div id="content"></div>
+		</div>
+	</body>
+	<script>
+		var editor = ace.edit("editor");
+		editor.setTheme("ace/theme/twilight");
+		editor.session.setMode("ace/mode/javascript");
+		//editor.resize(10, 10);
+		//editor.setAutoScrollEditorIntoView(true);
+	</script>
+</html>

@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <script src="/lib/acorn.js"></script>
+	<script src="/lib/interpreter.js"></script>
+    <script>
+		var sc;
+		var myCode = 'var x = new myClass(url);log("In-interpreter result", x.someFunction());x;';
+		//Instead of declaring myClass here, we inject the myClass factory function
+		var initFunc = function(interpreter, scope) {
+			sc = scope;
+			interpreter.setProperty(scope, 'url', document.URL);
+			interpreter.setProperty(scope, 'log', interpreter.createNativeFunction(function(){
+				return console.log(...arguments)
+			}));
+			console.log(scope);
+		};
+		
+		var myInterpreter = new Interpreter("function myClass(url){this.url=url}" + myCode, initFunc);
+		var wrapper = function() {
+			return "result";
+		}
+		var myClass = myInterpreter.getValueFromScope('myClass');
+		var myClassPrototype = myInterpreter.getProperty(myClass, 'prototype');
+		myInterpreter.setValue([myClassPrototype, 'someFunction'], myInterpreter.createNativeFunction(wrapper));
+		
+		myInterpreter.run();
+		var interpreterResult = myInterpreter.value;
+		console.log("Interpreter result", interpreterResult.someFunction);
+    </script>
+  </head>
+</html>

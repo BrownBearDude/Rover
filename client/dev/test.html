@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <script src="https://rawcdn.githack.com/NeilFraser/JS-Interpreter/77b5cbe77edbf22e42150f043dd9a93e054d8211/acorn_interpreter.js"></script>
+    <script>
+      class myClass {
+        constructor(url) {
+          this.url = url;
+        }
+        someFunction() {
+          return "someResult";
+        }
+      }
+      var myCode = 'var x = newMyClass(url);log("In-interpreter result", x.someFunction);x;';
+      var initFunc = function(interpreter, scope) {
+        interpreter.setProperty(scope, 'url', document.URL);
+        var wrapper = function() {
+          return new myClass(...arguments);
+        };
+        interpreter.setProperty(scope, 'newMyClass', interpreter.createNativeFunction(wrapper));
+        interpreter.setProperty(scope, 'log', interpreter.createNativeFunction(function(){
+          return console.log(...arguments)
+        }));
+      };
+    var myInterpreter = new Interpreter(myCode, initFunc);
+    myInterpreter.run();
+    var interpreterResult = myInterpreter.value;
+    var regularResult = new myClass(document.URL);
+    console.log("Interpreter result", interpreterResult.someFunction);
+    console.log("JS result", regularResult.someFunction);
+    </script>
+  </head>
+</html>
