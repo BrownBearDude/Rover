@@ -96,16 +96,23 @@ class World{
 			};
 			for(var k in apiFuncs){
 				//console.log(k, apiFuncs[k]);
-				interpreter.setProperty(scope, k, interpreter.createNativeFunction(apiFuncs[k]))
-			}
+                interpreter.setProperty(scope, k, interpreter.createNativeFunction(apiFuncs[k]));
+            }
+            interpreter.setProperty(scope, "_ALLBOTNAMES", interpreter.nativeToPseudo(_this.entities.map(e=>e.name)));
 		}
 		this.inject = [ //These functions are injected into the sandbox
-			"function ControllableEntity(name){this.name=name}",
-			"function getBot(name){return new ControllableEntity(name)}"
+            "function ControllableEntity(name){this.name=name}",
+            "function getBot(name){return new ControllableEntity(name)}",
+            "_ALLBOTNAMES = _ALLBOTNAMES.map(function(n){return new ControllableEntity(n)});",
+            "var Bots = {};",
+            "_ALLBOTNAMES.forEach(function(x){Bots[x.name]=x});",
+            "delete _ALLBOTNAMES;"
 		].join("");
 		
 		this.sandbox = new Interpreter(this.inject + code, initApi);
-		
+        //this.sandbox.appendCode(");
+        //var allbots = this.sandbox.getValueFromScope('ControllableEntity');
+
 		var ControllableEntity = this.sandbox.getValueFromScope('ControllableEntity');
 		var ControllableEntityPrototype = this.sandbox.getProperty(ControllableEntity, 'prototype');
 		
