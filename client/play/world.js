@@ -1,3 +1,4 @@
+"use strict";
 class World{
 	constructor(worldID){
 		this.loaded = 0;
@@ -14,9 +15,9 @@ class World{
 		};
 		this.markerID;
 		this.desc;
-		loadJSON("/levels/" + worldID + "/data.json", json => {this.json = json;this.loadLevel(json)}, e => this.failed = true);
+		loadJSON("/levels/" + worldID + "/data.json", json => {this.json = json;this.loadLevel(json, 0)}, e => this.failed = true);
 		loadStrings("/levels/" + worldID + "/t_index.txt", index => {
-			var desc = [];
+			let desc = [];
 			index.forEach(path => loadStrings("/levels/" + worldID + "/task/" + path, md => {
 				desc.push(md.join("\n"));
 				if(desc.length >= index.length){
@@ -30,18 +31,20 @@ class World{
 		return this.loaded == this.loadCount? "ready" : (this.failed ? "failed" : "loading");
 	}
 	
-	loadLevel(json){
+	loadLevel(json, index){
+		//console.log(json);
 		this.loaded = 0;
 		this.loadCount = 1;
-		this.entities = json.entities;
-		this.terrain = json.terrain;
-		this.tex = {};
-		//console.log(json.tex);
-		Object.keys(json.tex).forEach(name =>{
-			this.loadCount++;		
-			loadImage(json.tex[name], img=>{this.tex[name] = img;this.loaded++});
-		});
-		
+		this.entities = json.tests[index].entities;
+		this.terrain = json.tests[index].terrain;
+		if(!this.tex){
+			this.tex = {};
+			//console.log(json.tex);
+			Object.keys(json.tex).forEach(name =>{
+				this.loadCount++;		
+				loadImage(json.tex[name], img=>{this.tex[name] = img;this.loaded++});
+			});
+		}
 		this.loaded++;
 	}
 	
@@ -50,22 +53,22 @@ class World{
 			this.actionBuffer = this.actionBuffer.filter(x=>x["func"](x["data"]));
 		} else if(this.sandbox){
 			this.sandbox.step();
-			var start = 0;
-			var end = 0;
+			let start = 0;
+			let end = 0;
 			if (this.sandbox.stateStack.length) {
 				if(this.markerID){
 					editor.session.removeMarker(this.markerID);
 				}
-				var node = this.sandbox.stateStack[this.sandbox.stateStack.length - 1].node;
+				let node = this.sandbox.stateStack[this.sandbox.stateStack.length - 1].node;
 				start = node.start - this.inject.length;
 				end = node.end - this.inject.length;
 			}
-			var startLine = 0;
-			var endLine = 0;
-			var startChar = 0;
-			var endChar = 0;
-			var code = editor.getValue();
-			for(var i = 0;i <= end;i++){
+			let startLine = 0;
+			let endLine = 0;
+			let startChar = 0;
+			let endChar = 0;
+			let code = editor.getValue();
+			for(let i = 0;i <= end;i++){
 				if(code[i] == "\n"){
 					endChar = 0;
 					endLine++;
@@ -86,35 +89,36 @@ class World{
 	}
 	
 	loadCode(code){
-		var _this = this;
+		let _this = this;
 		function initApi(interpreter, scope) {
 			// Add native api functions
-			var apiFuncs = { //These functions are native
+			let apiFuncs = { //These functions are native
 				_NATIVE_getBot: function(name){return _this.entities.filter(e=>e.controllable&&e.name==name)[0]},
 				done: function(){return false},
 				log: function(){console.log(...arguments)}
 			};
-			for(var k in apiFuncs){
+			for(let k in apiFuncs){
 				//console.log(k, apiFuncs[k]);
                 interpreter.setProperty(scope, k, interpreter.createNativeFunction(apiFuncs[k]));
             }
             interpreter.setProperty(scope, "_ALLBOTNAMES", interpreter.nativeToPseudo(_this.entities.map(e=>e.name)));
 		}
 		this.inject = [ //These functions are injected into the sandbox
-            "function ControllableEntity(name){this.name=name}",
+            "ControllableEntity = function(name){this.name=name}",
             "function getBot(name){return new ControllableEntity(name)}",
             "_ALLBOTNAMES = _ALLBOTNAMES.map(function(n){return new ControllableEntity(n)});",
-            "var Bots = {};",
+            "let Bots = {};",
             "_ALLBOTNAMES.forEach(function(x){Bots[x.name]=x});",
-            "delete _ALLBOTNAMES;"
+            "delete _ALLBOTNAMES;",
+			"delete ControllableEntity;"
 		].join("");
 		
 		this.sandbox = new Interpreter(this.inject + code, initApi);
         //this.sandbox.appendCode(");
-        //var allbots = this.sandbox.getValueFromScope('ControllableEntity');
+        //let allbots = this.sandbox.getValueFromScope('ControllableEntity');
 
-		var ControllableEntity = this.sandbox.getValueFromScope('ControllableEntity');
-		var ControllableEntityPrototype = this.sandbox.getProperty(ControllableEntity, 'prototype');
+		let ControllableEntity = this.sandbox.getValueFromScope('ControllableEntity');
+		let ControllableEntityPrototype = this.sandbox.getProperty(ControllableEntity, 'prototype');
 		
 		function turnBase(entity, rot){
 			_this.actionBuffer.push({
@@ -138,8 +142,8 @@ class World{
 		}
 		
 		this.sandbox.setValue([ControllableEntityPrototype, 'turnLeft'], this.sandbox.createNativeFunction(function(){
-			var name = this.properties.name;
-			var entity = _this.entities.filter(function(e){return e.controllable&&e.name==name})[0];
+			let name = this.properties.name;
+			let entity = _this.entities.filter(function(e){return e.controllable&&e.name==name})[0];
 			turnBase(entity, -1);
 			//entity.rot--;
 			//if(entity.rot < 0){
@@ -149,16 +153,16 @@ class World{
 		}));
 		
 		this.sandbox.setValue([ControllableEntityPrototype, 'turnRight'], this.sandbox.createNativeFunction(function(){
-			var name = this.properties.name;
-			var entity = _this.entities.filter(function(e){return e.controllable&&e.name==name})[0];
+			let name = this.properties.name;
+			let entity = _this.entities.filter(function(e){return e.controllable&&e.name==name})[0];
 			turnBase(entity, 1);
 			//entity.rot++;
 			_this.snapTo = entity;
 		}));
 		
 		this.sandbox.setValue([ControllableEntityPrototype, 'move'], this.sandbox.createNativeFunction(function(){
-			var name = this.properties.name;
-			var entity = _this.entities.filter(function(e){return e.controllable&&e.name==name})[0];
+			let name = this.properties.name;
+			let entity = _this.entities.filter(function(e){return e.controllable&&e.name==name})[0];
 			//console.log("bot moved");
 			_this.actionBuffer.push({
 				"func" : function(data){
@@ -186,14 +190,14 @@ class World{
 		
 
 		this.sandbox.setValue([ControllableEntityPrototype, 'getPos'], this.sandbox.createNativeFunction(function(){
-			var name = this.properties.name;
-			var entity = _this.entities.filter(function(e){return e.controllable&&e.name==name})[0];
+			let name = this.properties.name;
+			let entity = _this.entities.filter(function(e){return e.controllable&&e.name==name})[0];
 			return _this.sandbox.nativeToPseudo({x: entity.x, y: entity.y});
 		}));
 		
 		this.sandbox.setValue([ControllableEntityPrototype, 'getTile'], this.sandbox.createNativeFunction(function(){
-			var name = this.properties.name;
-			var entity = _this.entities.filter(function(e){return e.controllable&&e.name==name})[0];
+			let name = this.properties.name;
+			let entity = _this.entities.filter(function(e){return e.controllable&&e.name==name})[0];
 			return _this.sandbox.nativeToPseudo(_this.terrain[entity.x][entity.y]);
 		}));
 		
@@ -217,8 +221,8 @@ class World{
 			translate(-1 * this.snapTo.x * this.TILE.X(), -1 * this.snapTo.y * this.TILE.Y());
 		}
 		//translate(this.TILE.X / 2, this.TILE.Y / 2);
-		for(var x = 0;x < this.terrain.length;x++){
-			for(var y = 0;y < this.terrain[x].length;y++){
+		for(let x = 0;x < this.terrain.length;x++){
+			for(let y = 0;y < this.terrain[x].length;y++){
 				image(this.tex[this.terrain[x][y].tex], x * this.TILE.X(), y * this.TILE.Y(), this.TILE.X(), this.TILE.Y());
 			}
 		}
