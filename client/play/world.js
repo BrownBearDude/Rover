@@ -104,14 +104,13 @@ class World{
             interpreter.setProperty(scope, "_ALLBOTNAMES", interpreter.nativeToPseudo(_this.entities.map(e=>e.name)));
 		}
 		this.inject = [ //These functions are injected into the sandbox
-            "ControllableEntity = function(name){this.name=name}",
+            "function ControllableEntity(name){this.name=name}",
             "function getBot(name){return new ControllableEntity(name)}",
             "_ALLBOTNAMES = _ALLBOTNAMES.map(function(n){return new ControllableEntity(n)});",
-            "let Bots = {};",
+            "var Bots = {};",
             "_ALLBOTNAMES.forEach(function(x){Bots[x.name]=x});",
-            "delete _ALLBOTNAMES;",
-			"delete ControllableEntity;"
-		].join("");
+            "delete _ALLBOTNAMES;"
+		].join("\n");
 		
 		this.sandbox = new Interpreter(this.inject + code, initApi);
         //this.sandbox.appendCode(");
@@ -198,7 +197,7 @@ class World{
 		this.sandbox.setValue([ControllableEntityPrototype, 'getTile'], this.sandbox.createNativeFunction(function(){
 			let name = this.properties.name;
 			let entity = _this.entities.filter(function(e){return e.controllable&&e.name==name})[0];
-			return _this.sandbox.nativeToPseudo(_this.terrain[entity.x][entity.y]);
+			return _this.sandbox.nativeToPseudo(_this.terrain[entity.x][entity.y].data);
 		}));
 		
 		this.sandbox.setValue([ControllableEntityPrototype, 'dieInVietnam'], this.sandbox.createNativeFunction(function(){
