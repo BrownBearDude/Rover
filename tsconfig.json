@@ -1,0 +1,10 @@
+{
+	"compilerOptions": {
+		"outDir": "./client",
+		"allowJs": true,
+		"target": "es6"
+	},
+	"include": [
+		"./src/**/*"
+	]
+}

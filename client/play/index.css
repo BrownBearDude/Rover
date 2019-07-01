@@ -8,28 +8,28 @@
 	height: 80%;
 }
 
-#game-div{
+#gameDiv{
 	position: absolute;
 	top: 0;
 	left: calc(100%/3);
 	width: calc(100%/3);
 	height: 100%;
 	background:#B22E20;
-	display: flex;
+}
+
+#canvasContainer {
+    top: 0;
+    height: 80%;
+    width: 100%;
+    display: flex;
 }
 
 canvas{
-	image-rendering:optimizeSpeed;              /* Legal fallback                 */
-	image-rendering:-moz-crisp-edges;           /* Firefox                        */
-	image-rendering:-o-crisp-edges;             /* Opera                          */
-	image-rendering:-webkit-optimize-contrast;  /* Chrome (and eventually Safari) */
-	image-rendering:crisp-edges;                /* CSS3 Proposed                  */
-	-ms-interpolation-mode:bicubic;             /* IE8+                           */
 	margin: auto;
 	display: block;
 }
 
-#buttonPanel{
+#editorPanel{
 	position: absolute;
 	left: 0;
 	bottom: 0;
@@ -38,7 +38,16 @@ canvas{
 	background:#1F1F1F;
 }
 
-#info-div{
+#gamePanel {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 20%;
+    width: calc(100%/3);
+    background: #1F1F1F;
+}
+
+#infoDiv{
 	position: absolute;
 	right: 0;
 	bottom: 0;
@@ -47,12 +56,12 @@ canvas{
 	width: calc(100%/3);
 }
 
-#info-div #tabs{
+#tabs{
 	top: 0;
 	height: 5%
 }
 
-#info-div #content{
+#content{
 	padding: 0;
 	margin: 0;
 	bottom: 0;

@@ -2,11 +2,15 @@
   "ExpandedNodes": [
     "",
     "\\client",
-    "\\client\\dev",
     "\\client\\docs",
     "\\client\\images",
-    "\\client\\play"
+    "\\client\\play",
+    "\\src",
+    "\\src\\lib",
+    "\\src\\play",
+    "\\src\\play\\definitions",
+    "\\src\\play\\definitions\\p5"
   ],
-  "SelectedNode": "\\client\\play\\world.js",
+  "SelectedNode": "\\src\\play\\world.ts",
   "PreviewInSolutionExplorer": false
 }

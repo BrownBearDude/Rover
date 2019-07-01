@@ -1,0 +1,1 @@
+declare function marked(path: string): any;
