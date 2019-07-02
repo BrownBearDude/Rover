@@ -1,15 +1,16 @@
-let world : World;
+
+let world: World;
 let canvasDiv : Element;
 let infoDiv : Element;
 let editor : AceAjax.Editor;
 
 function setup() {
-    canvasDiv = document.getElementById('canvas-container')
+    canvasDiv = document.getElementById('canvasContainer')
     editor = ace.edit("editor");
     editor.setTheme("ace/theme/twilight");
     editor.session.setMode("ace/mode/javascript");
     let size : number[] = resizeToFit(canvasDiv);
-	createCanvas(size[0], size[1]).parent('canvas-container');
+	createCanvas(size[0], size[1]).parent('canvasContainer');
     let ID : string = (new URL(document.URL)).searchParams.get("map");
 	world = new World(ID);
 }
@@ -23,7 +24,7 @@ function draw(){
 		window.open("/", "_self");
 	}
 	if(!infoDiv && world.desc){
-		infoDiv = document.querySelector("#info-div #content");
+		infoDiv = document.querySelector("#content");
 		infoDiv.innerHTML = marked(world.desc[0]);
 	}
 	background(0);

@@ -220,4 +220,3 @@ class World {
         pop();
     }
 }
-export { World };

@@ -43,7 +43,7 @@ canvas{
     left: 0;
     bottom: 0;
     height: 20%;
-    width: calc(100%/3);
+    width: 100%;
     background: #1F1F1F;
 }
 

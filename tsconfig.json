@@ -1,9 +1,11 @@
 {
-	"compilerOptions": {
-		"outDir": "./client",
-		"allowJs": true,
-		"target": "es6"
-	},
+  "compilerOptions": {
+    "allowJs": true,
+    "module": "ES6",
+    "moduleResolution": "classic",
+    "outDir": "./dist",
+    "target": "es6"
+  },
 	"include": [
 		"./src/**/*"
 	]
