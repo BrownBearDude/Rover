@@ -5,12 +5,12 @@
     "\\client\\docs",
     "\\client\\images",
     "\\client\\play",
+    "\\dist",
     "\\src",
-    "\\src\\lib",
     "\\src\\play",
     "\\src\\play\\definitions",
-    "\\src\\play\\definitions\\p5"
+    "\\src\\play\\definitions\\p5\\lib"
   ],
-  "SelectedNode": "\\src\\play\\world.ts",
+  "SelectedNode": "\\src\\play\\index.ts",
   "PreviewInSolutionExplorer": false
 }

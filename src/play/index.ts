@@ -1,3 +1,4 @@
+import { World } from "./world";
 
 let world: World;
 let canvasDiv : Element;
@@ -21,7 +22,7 @@ function draw(){
 	}
 	if(world.ready() == "failed"){
 		alert("Oops! Looks like this world id is invalid.");
-		window.open("/", "_self");
+		//window.open("/", "_self");
 	}
 	if(!infoDiv && world.desc){
 		infoDiv = document.querySelector("#content");
@@ -43,7 +44,9 @@ function resizeToFit(div){
     let n : number = Math.min(div.offsetWidth, div.offsetHeight);
 	return [n,n];
 }
-
+window.setup = setup;
+window.draw = draw;
+window.windowResized = windowResized;
 /*
 //Code here excecutes once
 var fib = [];

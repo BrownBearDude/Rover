@@ -1,4 +1,7 @@
 @echo off
-title Building. . .
-tsc
+call clean.cmd
+title Building with parcel. . .
+echo Building with parcel. . .
+call parcel build src/**/index.html
+echo Done.
 pause

@@ -11,7 +11,7 @@ class World{
     terrain: any[][];
     tex: { [key: string]: Image };
     json: Object;
-    sandbox: any; //super hacky fix idk man its 1 AM wtf
+    sandbox: any; //Wut
     actionBuffer: Object[];
     failed: boolean;
     markerID: number;
@@ -251,3 +251,4 @@ class World{
 		pop();
 	}
 }
+export { World };

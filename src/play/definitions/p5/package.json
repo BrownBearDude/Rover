@@ -50,5 +50,8 @@
   "typeScriptVersion": "2.9",
   "types": "index",
   "typesPublisherContentHash": "a182d0fdc3574e22610d5e3e76426de1e305f1b4cd27d8ffc89f043c7b10d20c",
-  "version": "0.7.3"
+  "version": "0.7.3",
+  "devDependencies": {
+    "marked": "^0.6.3"
+  }
 }
