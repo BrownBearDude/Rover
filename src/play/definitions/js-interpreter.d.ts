@@ -1,1 +1,0 @@
-declare var Interpreter: any; //Hacky fix, todo

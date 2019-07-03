@@ -132,7 +132,6 @@ declare namespace AceAjax {
      * The main class required to set up an Ace instance in the browser.
     **/
     export interface Ace {
-        Range: any;
 
         /**
          * Provides access to require in packed noconflict mode

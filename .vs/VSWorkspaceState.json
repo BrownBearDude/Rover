@@ -1,16 +1,14 @@
 {
   "ExpandedNodes": [
     "",
-    "\\client",
-    "\\client\\docs",
-    "\\client\\images",
-    "\\client\\play",
-    "\\dist",
     "\\src",
+    "\\src\\lib",
     "\\src\\play",
     "\\src\\play\\definitions",
-    "\\src\\play\\definitions\\p5\\lib"
+    "\\src\\play\\definitions\\@types",
+    "\\src\\play\\definitions\\@types\\p5\\lib",
+    "\\src\\play\\definitions\\@types\\p5\\src"
   ],
-  "SelectedNode": "\\src\\play\\index.ts",
+  "SelectedNode": "\\src\\play\\index.html",
   "PreviewInSolutionExplorer": false
 }

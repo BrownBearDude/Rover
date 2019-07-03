@@ -1,6 +1,4 @@
-import { Image } from "./definitions/p5/index";
-
-//import * as p5 from "./definitions/p5/index";
+import { Image } from "p5";
 
 class World{
     //Todos: Define interfaces for entites, terrain, etc
@@ -11,7 +9,7 @@ class World{
     terrain: any[][];
     tex: { [key: string]: Image };
     json: Object;
-    sandbox: any; //Wut
+    sandbox: Interpreter; //Wut
     actionBuffer: Object[];
     failed: boolean;
     markerID: number;
@@ -95,8 +93,8 @@ class World{
 					}
 				}
 			}
-			//console.log(startLine, endLine);
-			this.markerID = editor.session.addMarker(new ace.Range(startLine, startChar-1, endLine, endChar-1), "myMarker");
+            //console.log(startLine, endLine);
+            this.markerID = editor.session.addMarker(new AceAjax.Range(startLine, startChar - 1, endLine, endChar - 1), "myMarker");
 		}
 	}
 	
@@ -117,7 +115,6 @@ class World{
 		}
 		this.inject = [ //These functions are injected into the sandbox
             "function ControllableEntity(name){this.name=name}",
-            "function getBot(name){return new ControllableEntity(name)}",
             "_ALLBOTNAMES = _ALLBOTNAMES.map(function(n){return new ControllableEntity(n)});",
             "var Bots = {};",
             "_ALLBOTNAMES.forEach(function(x){Bots[x.name]=x});",

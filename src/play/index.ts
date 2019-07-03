@@ -1,4 +1,6 @@
+/// <reference types="marked" />
 import { World } from "./world";
+//import * as marked from "./definitions/@types/marked/index";
 
 let world: World;
 let canvasDiv : Element;
@@ -13,7 +15,9 @@ function setup() {
     let size : number[] = resizeToFit(canvasDiv);
 	createCanvas(size[0], size[1]).parent('canvasContainer');
     let ID : string = (new URL(document.URL)).searchParams.get("map");
-	world = new World(ID);
+    world = new World(ID);
+    (window as any).world = world;
+    (window as any).editor = editor;
 }
 
 function draw(){
@@ -25,8 +29,8 @@ function draw(){
 		//window.open("/", "_self");
 	}
 	if(!infoDiv && world.desc){
-		infoDiv = document.querySelector("#content");
-		infoDiv.innerHTML = marked(world.desc[0]);
+        infoDiv = document.querySelector("#content");
+        infoDiv.innerHTML = window.marked(world.desc[0]);
 	}
 	background(0);
 	if(world.sandbox){
@@ -44,9 +48,9 @@ function resizeToFit(div){
     let n : number = Math.min(div.offsetWidth, div.offsetHeight);
 	return [n,n];
 }
-window.setup = setup;
-window.draw = draw;
-window.windowResized = windowResized;
+(window as any).setup = setup;
+(window as any).draw = draw;
+(window as any).windowResized = windowResized;
 /*
 //Code here excecutes once
 var fib = [];
