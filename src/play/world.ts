@@ -1,3 +1,6 @@
+/// <reference types="./definitions/interpreter" />
+/// <reference types="../lib/monaco-editor/monaco" />
+
 import { Image } from "p5";
 
 class World{
@@ -12,11 +15,12 @@ class World{
     sandbox: Interpreter; //Wut
     actionBuffer: Object[];
     failed: boolean;
-    markerID: number;
+    editorDeco: string[];
     desc: string[];
     inject: string;
     snapTo: any;
     constructor(worldID) {
+        this.editorDeco = [];
         this.loaded = 0;
         this.loadCount = 1;
         this.actionBuffer = [];
@@ -57,8 +61,8 @@ class World{
 		}
 		this.loaded++;
 	}
-	
-	step(editor){
+
+    step(editor: monaco.editor.IStandaloneCodeEditor) {
 		if(this.actionBuffer.length){
 			this.actionBuffer = this.actionBuffer.filter(x=>x["func"](x["data"]));
 		} else if(this.sandbox){
@@ -66,9 +70,6 @@ class World{
 			let start = 0;
 			let end = 0;
 			if (this.sandbox.stateStack.length) {
-				if(this.markerID){
-					editor.session.removeMarker(this.markerID);
-				}
 				let node = this.sandbox.stateStack[this.sandbox.stateStack.length - 1].node;
 				start = node.start - this.inject.length;
 				end = node.end - this.inject.length;
@@ -94,7 +95,7 @@ class World{
 				}
 			}
             //console.log(startLine, endLine);
-            this.markerID = editor.session.addMarker(new AceAjax.Range(startLine, startChar - 1, endLine, endChar - 1), "myMarker");
+            this.editorDeco = editor.deltaDecorations(this.editorDeco, [{ range: new monaco.Range(startLine, startChar - 1, endLine, endChar - 1), options: { inlineClassName: 'codeActivity' } }]);
 		}
 	}
 	
@@ -128,7 +129,7 @@ class World{
 		let ControllableEntity = this.sandbox.getValueFromScope('ControllableEntity');
 		let ControllableEntityPrototype = this.sandbox.getProperty(ControllableEntity, 'prototype');
 		
-		function turnBase(entity, rot){
+		let turnBase = function(entity, rot){
 			_this.actionBuffer.push({
 				"func" : function(data){
 					entity.rot += rot/10;
@@ -147,7 +148,7 @@ class World{
 				},
 				"data": {"n":0,"target":entity.rot+rot}
 			});
-		}
+		};
 		
 		this.sandbox.setValue([ControllableEntityPrototype, 'turnLeft'], this.sandbox.createNativeFunction(function(){
 			let name = this.properties.name;

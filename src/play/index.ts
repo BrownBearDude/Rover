@@ -1,17 +1,36 @@
-/// <reference types="marked" />
+/// <reference types="./definitions/p5-global" />
+/// <reference types="./definitions/marked-global" />
+/// <reference types="../lib/monaco-editor/monaco" />
+import * as monaco from "../lib/monaco-editor/esm/vs/editor/editor.main";
 import { World } from "./world";
-//import * as marked from "./definitions/@types/marked/index";
+import * as acorn from "../lib/acorn";
+
+//import { AceAjax } from "ace";
+//(window as any).Ace = Ace;
+(window as any).acorn = acorn; // Import and expose acorn to the global scope
 
 let world: World;
 let canvasDiv : Element;
-let infoDiv : Element;
-let editor : AceAjax.Editor;
+let infoDiv: Element;
+let editor: monaco.editor.IStandaloneCodeEditor;
 
 function setup() {
     canvasDiv = document.getElementById('canvasContainer')
-    editor = ace.edit("editor");
-    editor.setTheme("ace/theme/twilight");
-    editor.session.setMode("ace/mode/javascript");
+
+    editor = monaco.editor.create(document.getElementById('editor'), {
+        value: [
+            "//Code here excecutes once",
+            "while(true){",
+            "   //Code in here loops forever",
+            "}",
+        ].join('\n'),
+        language: 'javascript',
+        theme: 'vs-dark'
+    });
+
+    //editor = ace.edit("editor");
+    //editor.setTheme("ace/theme/twilight");
+    //editor.session.setMode("ace/mode/javascript");
     let size : number[] = resizeToFit(canvasDiv);
 	createCanvas(size[0], size[1]).parent('canvasContainer');
     let ID : string = (new URL(document.URL)).searchParams.get("map");

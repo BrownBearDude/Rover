@@ -3939,5 +3939,5 @@ Interpreter.prototype['pseudoToNative'] = Interpreter.prototype.pseudoToNative;
 // Obsolete.  Do not use.
 Interpreter.prototype['createPrimitive'] = function(x) {return x;};
 
-//Hacky line to ensure global interpreter
-//window.Interpreter = this.Interpreter;
+//Hacky line to move interpreter to the global scope
+window['Interpreter'] = this['Interpreter'];

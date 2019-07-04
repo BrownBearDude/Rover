@@ -70,8 +70,6 @@ canvas{
 	overflow: auto;
 }
 
-.myMarker {
-  position:absolute;
+.codeActivity {
   background:rgba(100,200,100,0.5);
-  z-index:20
 }

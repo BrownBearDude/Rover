@@ -3,12 +3,13 @@
     "",
     "\\src",
     "\\src\\lib",
+    "\\src\\lib\\monaco-editor",
+    "\\src\\lib\\monaco-editor\\esm",
+    "\\src\\lib\\monaco-editor\\esm\\vs",
+    "\\src\\lib\\monaco-editor\\esm\\vs\\editor",
     "\\src\\play",
-    "\\src\\play\\definitions",
-    "\\src\\play\\definitions\\@types",
-    "\\src\\play\\definitions\\@types\\p5\\lib",
-    "\\src\\play\\definitions\\@types\\p5\\src"
+    "\\src\\play\\definitions"
   ],
-  "SelectedNode": "\\src\\play\\index.html",
+  "SelectedNode": "\\src\\play\\world.ts",
   "PreviewInSolutionExplorer": false
 }
