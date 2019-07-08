@@ -1,15 +1,16 @@
 {
   "ExpandedNodes": [
     "",
+    "\\@types",
     "\\src",
+    "\\src\\images",
     "\\src\\lib",
-    "\\src\\lib\\monaco-editor",
-    "\\src\\lib\\monaco-editor\\esm",
-    "\\src\\lib\\monaco-editor\\esm\\vs",
-    "\\src\\lib\\monaco-editor\\esm\\vs\\editor",
     "\\src\\play",
-    "\\src\\play\\definitions"
+    "\\src\\play\\definitions",
+    "\\static",
+    "\\types",
+    "\\zsxsxs"
   ],
-  "SelectedNode": "\\src\\play\\world.ts",
+  "SelectedNode": "\\src\\play\\tester.ts",
   "PreviewInSolutionExplorer": false
 }

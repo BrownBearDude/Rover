@@ -22,6 +22,7 @@
  * @author fraser@google.com (Neil Fraser)
  */
 declare class Interpreter {
+
     /**
      * Create a new interpreter.
      * @param {string} code Raw JavaScript text.
@@ -34,11 +35,31 @@ declare class Interpreter {
 
     //Stuff KSean222 has added
 
+    /**
+     * The interpreter's stack.
+     */
     stateStack: Interpreter.Stack[];
 
+    /**
+     * Convert a native object to the interpreter's psuedo-object
+     * @param {!Object} nativeObj Native object.
+     * @return {!Object} The converted pseudo-object.
+     */
     nativeToPseudo(nativeObj: any): any;
 
-    pseudoToNative(pseudoObj: any, opt_cycles: any): any;
+    /**
+     * Convert an array native object to the interpreter's psuedo-object. Does not apply on its elements.
+     * @param {!Object} nativeObj Native array object.
+     * @return {!Object} The converted pseudo-object.
+     */
+    arrayNativeToPseudo(nativeObj: any): any;
+
+    /**
+     * Convert the interpreter's psuedo-object back to a native object
+     * @param {!Object} nativeObj Psuedo-object.
+     * @return {!Object} The converted native object.
+     */
+    pseudoToNative(pseudoObj: any, opt_cycles?: any): any;
 
     //End stuff KSean222 has added
 
@@ -206,7 +227,7 @@ declare class Interpreter {
      * @param {boolean} opt_fixed Unchangeable property if true.
      * @param {boolean} opt_nonenum Non-enumerable property if true.
      */
-    setProperty(obj, name, value, opt_fixed: boolean, opt_nonenum: boolean): void;
+    setProperty(obj, name, value, opt_fixed?: boolean, opt_nonenum?: boolean): void;
 
     /**
      * Delete a property value on a data object.

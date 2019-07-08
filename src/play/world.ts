@@ -1,7 +1,18 @@
+/// <reference types="./definitions/p5-global" />
 /// <reference types="./definitions/interpreter" />
-/// <reference types="../lib/monaco-editor/monaco" />
-
+// <reference types="./definitions/babel-def-hack" />
 import { Image } from "p5";
+//import * as babel from "../../node_modules/babel-core/index";
+//import * as babel from "../../node_modules/@types/babel-core/index";
+// * as babel from "node_modules/@ty"
+import * as monaco from "../../node_modules/monaco-editor/esm/vs/editor/editor.main";
+//import babel from "babel-core";
+//import * as Babel from "babel-standalone";
+import { Tester } from "./tester";
+//import babel from "babel-core";
+//import * as babel from "../../node_modules/babel-core/lib/api/browser"
+
+import * as Babel from "babel-standalone";
 
 class World{
     //Todos: Define interfaces for entites, terrain, etc
@@ -11,7 +22,7 @@ class World{
     entities: any[];
     terrain: any[][];
     tex: { [key: string]: Image };
-    json: Object;
+    json: any;
     sandbox: Interpreter; //Wut
     actionBuffer: Object[];
     failed: boolean;
@@ -19,6 +30,7 @@ class World{
     desc: string[];
     inject: string;
     snapTo: any;
+    tester: Tester;
     constructor(worldID) {
         this.editorDeco = [];
         this.loaded = 0;
@@ -28,27 +40,35 @@ class World{
 		this.TILE = {
 			X: ()=>width/10,
 			Y: ()=>height/10
-		};
-		loadJSON("/levels/" + worldID + "/data.json", json => {this.json = json;this.loadLevel(json, 0)}, () => this.failed = true);
-		loadStrings("/levels/" + worldID + "/t_index.txt", index => {
-			let desc = [];
-			index.forEach(path => loadStrings("/levels/" + worldID + "/task/" + path, md => {
-				desc.push(md.join("\n"));
-				if(desc.length >= index.length){
-					this.desc = desc;
-				}
-			}, () => this.failed = true));
-		}, () => this.failed = true);
-	}
+        };
+        this.loadCount++;
+        loadJSON("/levels/" + worldID + "/data.json", json => { this.loaded++; this.json = json; this.loadLevel(json, 0) }, () => this.failed = true);
+        this.loadCount++;
+        loadStrings("/levels/" + worldID + "/t_index.txt", index => {
+            this.loaded++;
+            let desc = [];
+            index.forEach(path => {
+                this.loadCount++;
+                loadStrings("/levels/" + worldID + "/task/" + path, md => {
+                    this.loaded++;
+                    desc.push(md.join("\n"));
+                    if (desc.length >= index.length) {
+                        this.desc = desc;
+                    }
+                }, () => this.failed = true);
+            });
+        }, () => this.failed = true);
+        this.loadCount++;
+        loadStrings("/levels/" + worldID + "/tests.js", test => { this.tester = new Tester(this, test.join("\n"));this.loaded++; }, () => this.failed = true);
+        this.loaded++;
+    }
 	
 	ready(){
 		return this.loaded == this.loadCount? "ready" : (this.failed ? "failed" : "loading");
 	}
-	
-	loadLevel(json, index){
+
+    loadLevel(json: any, index: number) {
 		//console.log(json);
-		this.loaded = 0;
-		this.loadCount = 1;
 		this.entities = json.tests[index].entities;
 		this.terrain = json.tests[index].terrain;
 		if(!this.tex){
@@ -58,13 +78,12 @@ class World{
 				this.loadCount++;		
 				loadImage(json.tex[name], img=>{this.tex[name] = img;this.loaded++});
 			});
-		}
-		this.loaded++;
+        }
 	}
 
     step(editor: monaco.editor.IStandaloneCodeEditor) {
 		if(this.actionBuffer.length){
-			this.actionBuffer = this.actionBuffer.filter(x=>x["func"](x["data"]));
+			this.actionBuffer = this.actionBuffer.filter(f=>f["func"](f["data"]));
 		} else if(this.sandbox){
 			this.sandbox.step();
 			let start = 0;
@@ -95,11 +114,14 @@ class World{
 				}
 			}
             //console.log(startLine, endLine);
-            this.editorDeco = editor.deltaDecorations(this.editorDeco, [{ range: new monaco.Range(startLine, startChar - 1, endLine, endChar - 1), options: { inlineClassName: 'codeActivity' } }]);
+            this.editorDeco = editor.deltaDecorations(this.editorDeco, [{ range: new monaco.Range(startLine + 1, startChar, endLine + 1, endChar), options: { inlineClassName: 'codeActivity' } }]);
 		}
 	}
-	
-	loadCode(code){
+
+    loadCode(code: string) {
+        const babelFileResult: any = Babel.transform(code, { presets: ['es2015'] }); //TODO: Add types for babel
+        code = babelFileResult.code;
+        console.log("Converted babel code:\n" + code);
 		let _this = this;
 		function initApi(interpreter, scope) {
 			// Add native api functions

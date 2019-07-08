@@ -47,6 +47,12 @@ canvas{
     background: #1F1F1F;
 }
 
+#testSelect input[type=number]::-webkit-inner-spin-button,
+#testSelect input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 #infoDiv{
 	position: absolute;
 	right: 0;
@@ -71,5 +77,5 @@ canvas{
 }
 
 .codeActivity {
-  background:rgba(100,200,100,0.5);
+    background:rgba(100,200,100,0.5);
 }

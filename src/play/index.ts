@@ -1,21 +1,20 @@
 /// <reference types="./definitions/p5-global" />
 /// <reference types="./definitions/marked-global" />
-/// <reference types="../lib/monaco-editor/monaco" />
-import * as monaco from "../lib/monaco-editor/esm/vs/editor/editor.main";
+
+import * as monaco from "../../node_modules/monaco-editor/esm/vs/editor/editor.main";
 import { World } from "./world";
+import { Tester } from "./tester";
 import * as acorn from "../lib/acorn";
 
-//import { AceAjax } from "ace";
-//(window as any).Ace = Ace;
 (window as any).acorn = acorn; // Import and expose acorn to the global scope
 
 let world: World;
-let canvasDiv : Element;
-let infoDiv: Element;
+let canvasDiv: HTMLElement;
+let infoDiv: HTMLElement;
 let editor: monaco.editor.IStandaloneCodeEditor;
 
 function setup() {
-    canvasDiv = document.getElementById('canvasContainer')
+    canvasDiv = document.getElementById('canvasContainer');
 
     editor = monaco.editor.create(document.getElementById('editor'), {
         value: [
@@ -28,9 +27,6 @@ function setup() {
         theme: 'vs-dark'
     });
 
-    //editor = ace.edit("editor");
-    //editor.setTheme("ace/theme/twilight");
-    //editor.session.setMode("ace/mode/javascript");
     let size : number[] = resizeToFit(canvasDiv);
 	createCanvas(size[0], size[1]).parent('canvasContainer');
     let ID : string = (new URL(document.URL)).searchParams.get("map");
@@ -45,8 +41,12 @@ function draw(){
 	}
 	if(world.ready() == "failed"){
 		alert("Oops! Looks like this world id is invalid.");
-		//window.open("/", "_self");
-	}
+		window.open("/", "_self");
+    }
+    if ((window as any).onWorldReady) {
+        (window as any).onWorldReady();
+        (window as any).onWorldReady = undefined;
+    }
 	if(!infoDiv && world.desc){
         infoDiv = document.querySelector("#content");
         infoDiv.innerHTML = window.marked(world.desc[0]);
@@ -61,6 +61,7 @@ function draw(){
 function windowResized() {
     let size : number[] = resizeToFit(canvasDiv);
     resizeCanvas(size[0], size[1]);
+    editor.layout();
 }
 
 function resizeToFit(div){
@@ -70,6 +71,59 @@ function resizeToFit(div){
 (window as any).setup = setup;
 (window as any).draw = draw;
 (window as any).windowResized = windowResized;
+
+(window as any).beginTests = function (ctx: HTMLButtonElement) {
+    let parent: HTMLElement = document.getElementById("testSelect");
+    let testSelectInput: HTMLInputElement = parent.getElementsByClassName("testIndex")[0] as HTMLInputElement;
+    let btnLeft: HTMLButtonElement = parent.getElementsByClassName("buttonLeft")[0] as HTMLButtonElement;
+    let btnRight: HTMLButtonElement = parent.getElementsByClassName("buttonRight")[0] as HTMLButtonElement;
+
+    const originalState = { //Save state of buttons
+        left: btnLeft.disabled,
+        right: btnRight.disabled
+    };
+    
+    (window as any).unlockFunc = function(){ //Create unlocking function
+        editor.updateOptions({ readOnly: false });
+        ctx.disabled = false;
+        btnLeft.disabled = originalState.left;
+        btnRight.disabled = originalState.right;
+        testSelectInput.disabled = false;
+    };
+
+    editor.updateOptions({ readOnly: true }); //Lock
+    ctx.disabled = true;
+    btnLeft.disabled = true;
+    btnRight.disabled = true;
+    testSelectInput.disabled = true;
+
+    world.loadLevel(world.json, testSelectInput.valueAsNumber - 1);
+    world.loadCode(editor.getValue());
+};
+
+(window as any).testsSelectorHandler = function (ctx: HTMLElement) {
+    let btnLeft: HTMLButtonElement = ctx.parentElement.getElementsByClassName("buttonLeft")[0] as HTMLButtonElement;
+    let btnRight: HTMLButtonElement = ctx.parentElement.getElementsByClassName("buttonRight")[0] as HTMLButtonElement;
+    let testSelectInput: HTMLInputElement = ctx.parentElement.getElementsByClassName("testIndex")[0] as HTMLInputElement;
+    if (ctx.className == "buttonLeft") {
+        testSelectInput.stepDown();
+    }
+    if (ctx.className == "buttonRight") {
+        testSelectInput.stepUp();
+    }
+    testSelectInput.valueAsNumber = Math.min(testSelectInput.valueAsNumber, parseInt(testSelectInput.max));
+    testSelectInput.valueAsNumber = Math.max(testSelectInput.valueAsNumber, parseInt(testSelectInput.min));
+    btnLeft.disabled = testSelectInput.value == testSelectInput.min;
+    btnRight.disabled = testSelectInput.value == testSelectInput.max;
+    world.loadLevel(world.json, testSelectInput.valueAsNumber - 1);
+};
+
+(window as any).onWorldReady = function () {
+    let parent: HTMLElement = document.getElementById("testSelect");
+    let testSelectInput: HTMLInputElement = parent.getElementsByClassName("testIndex")[0] as HTMLInputElement;
+    testSelectInput.max = world.json.tests.length + "";
+    testSelectInput.min = "1";
+};
 /*
 //Code here excecutes once
 var fib = [];

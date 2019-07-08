@@ -1,13 +1,17 @@
 {
   "compilerOptions": {
+      "baseUrl": ".",
+      "paths": { "*": ["@types/*"] },
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "module": "ES6",
-    "moduleResolution": "classic",
     "outDir": "./dist",
     "target": "es6"
   },
-	"include": [
-		"./src/**/*"
-	]
+  "include": [
+    "./src/**/*"
+  ],
+  "types": [
+    "babel-core"
+  ]
 }
