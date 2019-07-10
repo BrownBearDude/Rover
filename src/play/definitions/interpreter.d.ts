@@ -61,6 +61,11 @@ declare class Interpreter {
      */
     pseudoToNative(pseudoObj: any, opt_cycles?: any): any;
 
+    /**
+     * The result of the last statement executed.
+     */
+    value: any;
+
     //End stuff KSean222 has added
 
     /**

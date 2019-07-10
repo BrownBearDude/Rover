@@ -3,9 +3,9 @@
 
 import * as monaco from "../../node_modules/monaco-editor/esm/vs/editor/editor.main";
 import { World } from "./world";
-import { Tester } from "./tester";
 import * as acorn from "../lib/acorn";
-
+import * as _initJS from "./initJS";
+_initJS.run();
 (window as any).acorn = acorn; // Import and expose acorn to the global scope
 
 let world: World;

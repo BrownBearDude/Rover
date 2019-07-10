@@ -1,5 +1,6 @@
 /// <reference types="./definitions/p5-global" />
 /// <reference types="./definitions/interpreter" />
+// <reference types="source-map" />
 // <reference types="./definitions/babel-def-hack" />
 import { Image } from "p5";
 //import * as babel from "../../node_modules/babel-core/index";
@@ -8,11 +9,12 @@ import { Image } from "p5";
 import * as monaco from "../../node_modules/monaco-editor/esm/vs/editor/editor.main";
 //import babel from "babel-core";
 //import * as Babel from "babel-standalone";
-import { Tester } from "./tester";
+import { Tester, testResult } from "./tester";
 //import babel from "babel-core";
 //import * as babel from "../../node_modules/babel-core/lib/api/browser"
 
-import * as Babel from "babel-standalone";
+import * as Babel from "@babel/standalone";
+import * as sourceMap from "../../node_modules/source-map/source-map";
 
 class World{
     //Todos: Define interfaces for entites, terrain, etc
@@ -31,6 +33,9 @@ class World{
     inject: string;
     snapTo: any;
     tester: Tester;
+    testResults: testResult[];
+    sourceMapConsumer: sourceMap.SourceMapConsumer;
+    babelFR: any;
     constructor(worldID) {
         this.editorDeco = [];
         this.loaded = 0;
@@ -84,7 +89,9 @@ class World{
     step(editor: monaco.editor.IStandaloneCodeEditor) {
 		if(this.actionBuffer.length){
 			this.actionBuffer = this.actionBuffer.filter(f=>f["func"](f["data"]));
-		} else if(this.sandbox){
+        } else if (this.sandbox) {
+            this.testResults = this.tester.test();
+            //console.log();
 			this.sandbox.step();
 			let start = 0;
 			let end = 0;
@@ -96,8 +103,8 @@ class World{
 			let startLine = 0;
 			let endLine = 0;
 			let startChar = 0;
-			let endChar = 0;
-			let code = editor.getValue();
+            let endChar = 0;
+            let code: string = this.babelFR.code;
 			for(let i = 0;i <= end;i++){
 				if(code[i] == "\n"){
 					endChar = 0;
@@ -112,17 +119,43 @@ class World{
 						startChar++;
 					}
 				}
-			}
+            }
+            console.log("start", startLine, startChar);
+            console.log("end", endLine, endChar);
+            console.log("orig", code.slice(start, end));
+            /*
+            let lg = (code) => {
+                let x = code.split("\n").slice(startLine, endLine);
+                let l = x[x.length - 1].length;
+                let y = x.join("\n");
+                return y.slice(startChar, y.length - l + endChar);
+            };
+            try {
+                console.log("mod", lg(code));
+            } catch (e) { }//console.error(e) }*/
+            //let debug = (window as any).debug;
+            let converted = this.sourceMapConsumer.originalPositionFor({ line: startLine + 1, column: startChar});
+            startLine = converted.line;
+            startChar = converted.column;
+            converted = this.sourceMapConsumer.originalPositionFor({ line: endLine + 1, column: endChar});
+            endLine = converted.line;
+            endChar = converted.column;
+            console.log("genStart", startLine, startChar);
+            console.log("genEnd", endLine, endChar);
             //console.log(startLine, endLine);
-            this.editorDeco = editor.deltaDecorations(this.editorDeco, [{ range: new monaco.Range(startLine + 1, startChar, endLine + 1, endChar), options: { inlineClassName: 'codeActivity' } }]);
+            this.editorDeco = editor.deltaDecorations(this.editorDeco, [{ range: new monaco.Range(startLine, startChar + 1, endLine, endChar + 1), options: { inlineClassName: 'codeActivity' } }]);
 		}
 	}
 
-    loadCode(code: string) {
-        const babelFileResult: any = Babel.transform(code, { presets: ['es2015'] }); //TODO: Add types for babel
+    async loadCode(code: string) {
+        //throw Error("TEST");
+        //window.babel = Babel;
+        const babelFileResult: any = Babel.transform(code, { presets: ['es2015'], "sourceMaps": true }); //TODO: Add types for babel
         code = babelFileResult.code;
+        this.sourceMapConsumer = await new sourceMap.SourceMapConsumer(babelFileResult.map);
+        this.babelFR = babelFileResult;
         console.log("Converted babel code:\n" + code);
-		let _this = this;
+		let _this: this = this;
 		function initApi(interpreter, scope) {
 			// Add native api functions
 			let apiFuncs = { //These functions are native
@@ -211,8 +244,13 @@ class World{
 							entity.x += 0.1;
 							break;
 					}
-					data.n++;
-					return data.n < 10;
+                    data.n++;
+                    if (data.n < 10) {
+                        return true;
+                    }
+                    entity.x = Math.round(entity.x);
+                    entity.y = Math.round(entity.y);
+					return false;
 				},
 				data: {n:0, target:0}
 			});

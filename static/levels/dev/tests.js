@@ -1,24 +1,26 @@
-newTask("Do three laps around the map", function(local){
-	local.init(function(){
-		local.set("laps", 0);
-		local.set("index", 0);
-		local.set("target",[
+newTask("Do three laps around the map", function(localStorage){
+	//log("localStorage", localStorage);
+	//log("globalStorage", globalStorage);
+	if(localStorage.laps === undefined){
+		localStorage.laps = 0;
+		localStorage.index = 0;
+		localStorage.targets = [
 			{x: 0, y: 9},
 			{x: 9, y: 9},
 			{x: 9, y: 0},
 			{x: 0, y: 0}
-		]);
-	});
-	local.get();
+		];
+		localStorage.debugCallAmount = 0;
+	}
+	
 	var bot = entities.filter(function(e){return e.name=="rover"&&e.controllable})[0];
-	log("TEST", bot);
-	log("DATA", data)
-	if(bot.x == data.targets[data.index].x && bot.y == data.targets[data.index].y){
-		data.index++;
-		if(data.index >= data.targets.length){
-			data.index = 0;
-			data.laps++;
+	if(bot.x == localStorage.targets[localStorage.index].x && bot.y == localStorage.targets[localStorage.index].y){
+		localStorage.index++;
+		if(localStorage.index >= localStorage.targets.length){
+			localStorage.index = 0;
+			localStorage.laps++;
 		}
 	}
-	return data.laps >= 3;
+	localStorage.debugCallAmount++;
+	return localStorage.laps >= 3;
 });

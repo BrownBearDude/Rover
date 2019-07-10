@@ -2,8 +2,8 @@
   "ExpandedNodes": [
     "",
     "\\@types",
+    "\\@types\\@babel",
     "\\src",
-    "\\src\\images",
     "\\src\\lib",
     "\\src\\play",
     "\\src\\play\\definitions",
@@ -11,6 +11,6 @@
     "\\types",
     "\\zsxsxs"
   ],
-  "SelectedNode": "\\src\\play\\tester.ts",
+  "SelectedNode": "\\src\\play\\world.ts",
   "PreviewInSolutionExplorer": false
 }
