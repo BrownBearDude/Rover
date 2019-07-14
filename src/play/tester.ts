@@ -22,9 +22,9 @@ class Tester {
             try{
                 c = this.sandbox.step();
             } catch (e) {
-                console.log(this.sandbox.getValue("entities"));
+                //console.log(this.sandbox.getValueFromScope("entities"));
                 console.error(e);
-                console.log(this.code.slice(x.node.start, x.node.end));
+                console.log(`var globalStorage = ${this.globalStorage};${this.code};globalStorage;`.slice(x.node.start, x.node.end));
             }
         };
         //this.sandbox.run();

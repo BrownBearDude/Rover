@@ -3921,7 +3921,8 @@ Interpreter.prototype['stepWhileStatement'] =
 // Preserve top-level API functions from being pruned/renamed by JS compilers.
 // Add others as needed.
 // The global object ('window' in a browser, 'global' in node.js) is 'this'.
-this['Interpreter'] = Interpreter;
+//console.log();
+//this['Interpreter'] = Interpreter;
 Interpreter.prototype['step'] = Interpreter.prototype.step;
 Interpreter.prototype['run'] = Interpreter.prototype.run;
 Interpreter.prototype['appendCode'] = Interpreter.prototype.appendCode;
@@ -3940,4 +3941,5 @@ Interpreter.prototype['pseudoToNative'] = Interpreter.prototype.pseudoToNative;
 Interpreter.prototype['createPrimitive'] = function(x) {return x;};
 
 //Hacky line to move interpreter to the global scope
-window['Interpreter'] = this['Interpreter'];
+window['Interpreter'] = Interpreter;
+console.log(Interpreter);

@@ -7,17 +7,17 @@
 					"y": 0,
 					"rot": 0,
 					"tex": "rover",
-					"name": "rover",
-					"controllable": true
+          "name": "rover",
+          "inherits": [ "ControllableEntity" ]
 				},
-				{
-					"x": 3,
-					"y": 3,
-					"rot": 0,
-					"tex": "rover",
-					"name": "rover2",
-					"controllable": true
-				}
+        {
+          "x": 3,
+          "y": 3,
+          "rot": 0,
+          "tex": "rover",
+          "name": "rover2",
+          "inherits": [ "ControllableEntity" ]
+        }
 			],
 			"terrain": [
 				[

@@ -1,18 +1,8 @@
 /// <reference types="./definitions/p5-global" />
-/// <reference types="./definitions/interpreter" />
-// <reference types="source-map" />
-// <reference types="./definitions/babel-def-hack" />
+/// <reference types="./definitions/interpreter"/>
 import { Image } from "p5";
-//import * as babel from "../../node_modules/babel-core/index";
-//import * as babel from "../../node_modules/@types/babel-core/index";
-// * as babel from "node_modules/@ty"
 import * as monaco from "../../node_modules/monaco-editor/esm/vs/editor/editor.main";
-//import babel from "babel-core";
-//import * as Babel from "babel-standalone";
 import { Tester, testResult } from "./tester";
-//import babel from "babel-core";
-//import * as babel from "../../node_modules/babel-core/lib/api/browser"
-
 import * as Babel from "@babel/standalone";
 import * as sourceMap from "../../node_modules/source-map/source-map";
 
@@ -47,7 +37,7 @@ class World{
 			Y: ()=>height/10
         };
         this.loadCount++;
-        loadJSON("/levels/" + worldID + "/data.json", json => { this.loaded++; this.json = json; this.loadLevel(json, 0) }, () => this.failed = true);
+        loadStrings("/levels/" + worldID + "/data.json", json => { this.loaded++; this.json = json.join("\n"); this.loadLevel(this.json, 0) }, () => this.failed = true);
         this.loadCount++;
         loadStrings("/levels/" + worldID + "/t_index.txt", index => {
             this.loaded++;
@@ -72,16 +62,17 @@ class World{
 		return this.loaded == this.loadCount? "ready" : (this.failed ? "failed" : "loading");
 	}
 
-    loadLevel(json: any, index: number) {
+    loadLevel(json: string, index: number) {
+        let j = JSON.parse(json);
 		//console.log(json);
-		this.entities = json.tests[index].entities;
-		this.terrain = json.tests[index].terrain;
+		this.entities = j.tests[index].entities;
+		this.terrain = j.tests[index].terrain;
 		if(!this.tex){
 			this.tex = {};
 			//console.log(json.tex);
-			Object.keys(json.tex).forEach(name =>{
+			Object.keys(j.tex).forEach(name =>{
 				this.loadCount++;		
-				loadImage(json.tex[name], img=>{this.tex[name] = img;this.loaded++});
+				loadImage(j.tex[name], img=>{this.tex[name] = img;this.loaded++});
 			});
         }
 	}
@@ -91,6 +82,7 @@ class World{
 			this.actionBuffer = this.actionBuffer.filter(f=>f["func"](f["data"]));
         } else if (this.sandbox) {
             this.testResults = this.tester.test();
+            if (this.testResults.filter(c => !c.passed).length == 0) { alert("MISSION SUCCESS") }
             //console.log();
 			this.sandbox.step();
 			let start = 0;
@@ -104,7 +96,7 @@ class World{
 			let endLine = 0;
 			let startChar = 0;
             let endChar = 0;
-            let code: string = this.babelFR.code;
+            let code: string = (window as any).buggyBabel ? this.babelFR.code : editor.getValue();
 			for(let i = 0;i <= end;i++){
 				if(code[i] == "\n"){
 					endChar = 0;
@@ -134,16 +126,21 @@ class World{
                 console.log("mod", lg(code));
             } catch (e) { }//console.error(e) }*/
             //let debug = (window as any).debug;
-            let converted = this.sourceMapConsumer.originalPositionFor({ line: startLine + 1, column: startChar});
-            startLine = converted.line;
-            startChar = converted.column;
-            converted = this.sourceMapConsumer.originalPositionFor({ line: endLine + 1, column: endChar});
-            endLine = converted.line;
-            endChar = converted.column;
-            console.log("genStart", startLine, startChar);
-            console.log("genEnd", endLine, endChar);
-            //console.log(startLine, endLine);
-            this.editorDeco = editor.deltaDecorations(this.editorDeco, [{ range: new monaco.Range(startLine, startChar + 1, endLine, endChar + 1), options: { inlineClassName: 'codeActivity' } }]);
+            if ((window as any).buggyBabel) {
+                let converted = this.sourceMapConsumer.originalPositionFor({ line: startLine + 1, column: startChar });
+                startLine = converted.line;
+                startChar = converted.column;
+                converted = this.sourceMapConsumer.originalPositionFor({ line: endLine + 1, column: endChar });
+                endLine = converted.line;
+                endChar = converted.column;
+                console.log("genStart", startLine, startChar);
+                console.log("genEnd", endLine, endChar);
+                editor.setValue(this.babelFR.code);
+                this.editorDeco = editor.deltaDecorations(this.editorDeco, [{ range: new monaco.Range(startLine + 2, startChar + 1, endLine + 1, endChar + 3), options: { inlineClassName: 'codeActivity' } }]);
+            } else {
+                //console.log(startLine, endLine);
+                this.editorDeco = editor.deltaDecorations(this.editorDeco, [{ range: new monaco.Range(startLine + 1, startChar, endLine + 1, endChar), options: { inlineClassName: 'codeActivity' } }]);
+            }
 		}
 	}
 
@@ -151,7 +148,10 @@ class World{
         //throw Error("TEST");
         //window.babel = Babel;
         const babelFileResult: any = Babel.transform(code, { presets: ['es2015'], "sourceMaps": true }); //TODO: Add types for babel
-        code = babelFileResult.code;
+        //const babelFileResult: any = {};
+        if ((window as any).buggyBabel) {
+            code = babelFileResult.code;
+        }
         this.sourceMapConsumer = await new sourceMap.SourceMapConsumer(babelFileResult.map);
         this.babelFR = babelFileResult;
         console.log("Converted babel code:\n" + code);
@@ -159,7 +159,7 @@ class World{
 		function initApi(interpreter, scope) {
 			// Add native api functions
 			let apiFuncs = { //These functions are native
-				_NATIVE_getBot: function(name){return _this.entities.filter(e=>e.controllable&&e.name==name)[0]},
+                _NATIVE_getBot: function (name) { return _this.entities.filter(e => e.inherits.includes("ControllableEntity") && e.name == name)[0]},
 				done: function(){return false},
 				log: console.log
 			};
@@ -207,7 +207,7 @@ class World{
 		
 		this.sandbox.setValue([ControllableEntityPrototype, 'turnLeft'], this.sandbox.createNativeFunction(function(){
 			let name = this.properties.name;
-			let entity = _this.entities.filter(function(e){return e.controllable&&e.name==name})[0];
+			let entity = _this.entities.filter(function(e){return e.inherits.includes("ControllableEntity")&&e.name==name})[0];
 			turnBase(entity, -1);
 			//entity.rot--;
 			//if(entity.rot < 0){
@@ -218,7 +218,7 @@ class World{
 		
 		this.sandbox.setValue([ControllableEntityPrototype, 'turnRight'], this.sandbox.createNativeFunction(function(){
 			let name = this.properties.name;
-			let entity = _this.entities.filter(function(e){return e.controllable&&e.name==name})[0];
+            let entity = _this.entities.filter(function (e) { return e.inherits.includes("ControllableEntity")&&e.name==name})[0];
 			turnBase(entity, 1);
 			//entity.rot++;
 			_this.snapTo = entity;
@@ -226,7 +226,7 @@ class World{
 		
 		this.sandbox.setValue([ControllableEntityPrototype, 'move'], this.sandbox.createNativeFunction(function(){
 			let name = this.properties.name;
-			let entity = _this.entities.filter(function(e){return e.controllable&&e.name==name})[0];
+            let entity = _this.entities.filter(function (e) { return e.inherits.includes("ControllableEntity")&&e.name==name})[0];
 			//console.log("bot moved");
 			_this.actionBuffer.push({
 				func : function(data){
@@ -260,13 +260,13 @@ class World{
 
 		this.sandbox.setValue([ControllableEntityPrototype, 'getPos'], this.sandbox.createNativeFunction(function(){
 			let name = this.properties.name;
-			let entity = _this.entities.filter(function(e){return e.controllable&&e.name==name})[0];
+            let entity = _this.entities.filter(function (e) { return e.inherits.includes("ControllableEntity")&&e.name==name})[0];
 			return _this.sandbox.nativeToPseudo({x: entity.x, y: entity.y});
 		}));
 		
 		this.sandbox.setValue([ControllableEntityPrototype, 'getTile'], this.sandbox.createNativeFunction(function(){
 			let name = this.properties.name;
-			let entity = _this.entities.filter(function(e){return e.controllable&&e.name==name})[0];
+            let entity = _this.entities.filter(function (e) { return e.inherits.includes("ControllableEntity")&&e.name==name})[0];
 			return _this.sandbox.nativeToPseudo(_this.terrain[entity.x][entity.y].data);
 		}));
 		

@@ -8,8 +8,8 @@
     "\\src\\play",
     "\\src\\play\\definitions",
     "\\static",
-    "\\types",
-    "\\zsxsxs"
+    "\\static\\levels",
+    "\\static\\levels\\dev"
   ],
   "SelectedNode": "\\src\\play\\world.ts",
   "PreviewInSolutionExplorer": false

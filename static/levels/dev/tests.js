@@ -1,6 +1,6 @@
 newTask("Do three laps around the map", function(localStorage){
-	//log("localStorage", localStorage);
-	//log("globalStorage", globalStorage);
+	log("localStorage", localStorage);
+	log("globalStorage", globalStorage);
 	if(localStorage.laps === undefined){
 		localStorage.laps = 0;
 		localStorage.index = 0;
@@ -13,7 +13,7 @@ newTask("Do three laps around the map", function(localStorage){
 		localStorage.debugCallAmount = 0;
 	}
 	
-	var bot = entities.filter(function(e){return e.name=="rover"&&e.controllable})[0];
+	var bot = entities.filter(function(e){return e.name=="rover"&&e.inherits.indexOf("ControllableEntity")+1})[0];
 	if(bot.x == localStorage.targets[localStorage.index].x && bot.y == localStorage.targets[localStorage.index].y){
 		localStorage.index++;
 		if(localStorage.index >= localStorage.targets.length){

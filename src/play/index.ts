@@ -6,6 +6,7 @@ import { World } from "./world";
 import * as acorn from "../lib/acorn";
 import * as _initJS from "./initJS";
 _initJS.run();
+//(window as any)['Interpreter'] = _initJS.Interpreter;
 (window as any).acorn = acorn; // Import and expose acorn to the global scope
 
 let world: World;
@@ -82,13 +83,15 @@ function resizeToFit(div){
         left: btnLeft.disabled,
         right: btnRight.disabled
     };
-    
+
+    const origLevel: Object = { l: testSelectInput.valueAsNumber - 1 };
     (window as any).unlockFunc = function(){ //Create unlocking function
         editor.updateOptions({ readOnly: false });
         ctx.disabled = false;
         btnLeft.disabled = originalState.left;
         btnRight.disabled = originalState.right;
         testSelectInput.disabled = false;
+        return origLevel;
     };
 
     editor.updateOptions({ readOnly: true }); //Lock
@@ -99,6 +102,14 @@ function resizeToFit(div){
 
     world.loadLevel(world.json, testSelectInput.valueAsNumber - 1);
     world.loadCode(editor.getValue());
+};
+
+(window as any).resetState = function () {
+    const l = (window as any).unlockFunc().l;
+    world.sandbox = undefined;
+    world.actionBuffer = [];
+    world.editorDeco = editor.deltaDecorations(world.editorDeco, []);
+    world.loadLevel(world.json, l);
 };
 
 (window as any).testsSelectorHandler = function (ctx: HTMLElement) {
@@ -121,7 +132,7 @@ function resizeToFit(div){
 (window as any).onWorldReady = function () {
     let parent: HTMLElement = document.getElementById("testSelect");
     let testSelectInput: HTMLInputElement = parent.getElementsByClassName("testIndex")[0] as HTMLInputElement;
-    testSelectInput.max = world.json.tests.length + "";
+    testSelectInput.max = JSON.parse(world.json).tests.length + "";
     testSelectInput.min = "1";
 };
 /*
