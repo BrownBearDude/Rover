@@ -159,7 +159,7 @@ class World{
 		function initApi(interpreter, scope) {
 			// Add native api functions
 			let apiFuncs = { //These functions are native
-                _NATIVE_getBot: function (name) { return _this.entities.filter(e => e.inherits.includes("ControllableEntity") && e.name == name)[0]},
+                _NATIVE_getBot: function (name) { return _this.entities.filter(e => e.inherits["ControllableEntity"] && e.name == name)[0]},
 				done: function(){return false},
 				log: console.log
 			};
@@ -207,7 +207,7 @@ class World{
 		
 		this.sandbox.setValue([ControllableEntityPrototype, 'turnLeft'], this.sandbox.createNativeFunction(function(){
 			let name = this.properties.name;
-			let entity = _this.entities.filter(function(e){return e.inherits.includes("ControllableEntity")&&e.name==name})[0];
+			let entity = _this.entities.filter(function(e){return e.inherits["ControllableEntity"]&&e.name==name})[0];
 			turnBase(entity, -1);
 			//entity.rot--;
 			//if(entity.rot < 0){
@@ -218,7 +218,7 @@ class World{
 		
 		this.sandbox.setValue([ControllableEntityPrototype, 'turnRight'], this.sandbox.createNativeFunction(function(){
 			let name = this.properties.name;
-            let entity = _this.entities.filter(function (e) { return e.inherits.includes("ControllableEntity")&&e.name==name})[0];
+            let entity = _this.entities.filter(function (e) { return e.inherits["ControllableEntity"]&&e.name==name})[0];
 			turnBase(entity, 1);
 			//entity.rot++;
 			_this.snapTo = entity;
@@ -226,7 +226,7 @@ class World{
 		
 		this.sandbox.setValue([ControllableEntityPrototype, 'move'], this.sandbox.createNativeFunction(function(){
 			let name = this.properties.name;
-            let entity = _this.entities.filter(function (e) { return e.inherits.includes("ControllableEntity")&&e.name==name})[0];
+            let entity = _this.entities.filter(function (e) { return e.inherits["ControllableEntity"]&&e.name==name})[0];
 			//console.log("bot moved");
 			_this.actionBuffer.push({
 				func : function(data){
@@ -260,13 +260,13 @@ class World{
 
 		this.sandbox.setValue([ControllableEntityPrototype, 'getPos'], this.sandbox.createNativeFunction(function(){
 			let name = this.properties.name;
-            let entity = _this.entities.filter(function (e) { return e.inherits.includes("ControllableEntity")&&e.name==name})[0];
+            let entity = _this.entities.filter(function (e) { return e.inherits["ControllableEntity"]&&e.name==name})[0];
 			return _this.sandbox.nativeToPseudo({x: entity.x, y: entity.y});
 		}));
 		
 		this.sandbox.setValue([ControllableEntityPrototype, 'getTile'], this.sandbox.createNativeFunction(function(){
 			let name = this.properties.name;
-            let entity = _this.entities.filter(function (e) { return e.inherits.includes("ControllableEntity")&&e.name==name})[0];
+            let entity = _this.entities.filter(function (e) { return e.inherits["ControllableEntity"]&&e.name==name})[0];
 			return _this.sandbox.nativeToPseudo(_this.terrain[entity.x][entity.y].data);
 		}));
 		

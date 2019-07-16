@@ -13,6 +13,7 @@ class Tester {
     }
     test() {
         this.globalStorage = this.sandbox ? JSON.stringify(this.sandbox.pseudoToNative(this.sandbox.value)) : "{}";
+        console.log(`var globalStorage = ${this.globalStorage};${this.code};globalStorage;`);
         this.sandbox = new Interpreter(`var globalStorage = ${this.globalStorage};${this.code};globalStorage;`, this._initApi);
         this.results = [];
         let c: boolean = true;

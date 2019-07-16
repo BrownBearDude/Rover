@@ -2,10 +2,12 @@
 /// <reference types="./definitions/marked-global" />
 
 import * as monaco from "../../node_modules/monaco-editor/esm/vs/editor/editor.main";
+import * as FileSystem from "./filesystem";
 import { World } from "./world";
 import * as acorn from "../lib/acorn";
 import * as _initJS from "./initJS";
 _initJS.run();
+(window as any).FileSystem = FileSystem;
 //(window as any)['Interpreter'] = _initJS.Interpreter;
 (window as any).acorn = acorn; // Import and expose acorn to the global scope
 
