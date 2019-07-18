@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-      "baseUrl": ".",
-      "paths": { "*": ["@types/*"] },
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "jsx": "react",
     "module": "ES6",
     "outDir": "./dist",
+    "paths": { "*": [ "@types/*" ] },
     "target": "es6"
   },
   "include": [
