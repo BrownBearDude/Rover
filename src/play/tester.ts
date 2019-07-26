@@ -1,15 +1,23 @@
+import * as acorn from "../lib/acorn";
 interface testResult{
     desc: string,
     passed: boolean
 }
 class Tester {
-    sandbox: Interpreter;
-    results: testResult[];
-    globalStorage: string;
-    code: string;
+    private sandbox: Interpreter;
+    public results: testResult[];
+    private globalStorage: string;
+    private code: string;
+    private raw_code: string;
     _initApi: (interpreter: Interpreter, scope: any) => void;
     constructor(world, code) {
+        this.raw_code = code;
         this.reset(world, code);
+    }
+    public getTests() {
+        return acorn.parse(this.raw_code).body
+            .filter(n => n.type == "ExpressionStatement" && n.expression.callee.name == "newTask")
+            .map(n => n.expression.arguments[0].value);
     }
     test() {
         this.globalStorage = this.sandbox ? JSON.stringify(this.sandbox.pseudoToNative(this.sandbox.value)) : "{}";

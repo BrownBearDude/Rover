@@ -22,6 +22,7 @@ let infoDiv: HTMLElement;
 let editor: monaco.editor.IStandaloneCodeEditor;
 
 function setup() {
+    noSmooth();
     canvasDiv = document.getElementById('canvasContainer');
 
     editor = monaco.editor.create(document.getElementById('editor'), {
@@ -43,7 +44,7 @@ function setup() {
     (window as any).editor = editor;
 }
 
-function draw(){
+function draw() {
 	if(world.ready() == "loading"){
 		return;
 	}

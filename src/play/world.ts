@@ -26,7 +26,7 @@ class World{
     testResults: testResult[];
     sourceMapConsumer: sourceMap.SourceMapConsumer;
     babelFR: any;
-    constructor(worldID) {
+    constructor(worldID: number) {
         this.editorDeco = [];
         this.loaded = 0;
         this.loadCount = 1;
