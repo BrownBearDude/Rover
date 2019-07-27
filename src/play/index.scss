@@ -22,11 +22,19 @@
     height: 80%;
     width: 100%;
     display: flex;
+
+    canvas {
+        margin: auto;
+        display: block;
+    }
 }
 
-canvas{
-	margin: auto;
-	display: block;
+#infoPanelCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
 
 #editorPanel{

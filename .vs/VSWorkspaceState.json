@@ -4,8 +4,9 @@
     "\\@types",
     "\\@types\\@babel",
     "\\src",
-    "\\src\\play"
+    "\\src\\play",
+    "\\src\\play\\definitions"
   ],
-  "SelectedNode": "\\src\\play\\index.scss",
+  "SelectedNode": "\\src\\play\\world.ts",
   "PreviewInSolutionExplorer": false
 }

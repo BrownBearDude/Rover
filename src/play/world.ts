@@ -5,6 +5,7 @@ import * as monaco from "../../node_modules/monaco-editor/esm/vs/editor/editor.m
 import { Tester, testResult } from "./tester";
 import * as Babel from "@babel/standalone";
 import * as sourceMap from "../../node_modules/source-map/source-map";
+import p5 from "p5";
 
 class World{
     //Todos: Define interfaces for entites, terrain, etc
@@ -26,7 +27,9 @@ class World{
     testResults: testResult[];
     sourceMapConsumer: sourceMap.SourceMapConsumer;
     babelFR: any;
-    constructor(worldID: number) {
+    subdisplay: CanvasRenderingContext2D;
+    subdisplay_data: Object
+    constructor(worldID: string) {
         this.editorDeco = [];
         this.loaded = 0;
         this.loadCount = 1;
@@ -56,6 +59,7 @@ class World{
         this.loadCount++;
         loadStrings("/levels/" + worldID + "/tests.js", test => { this.tester = new Tester(this, test.join("\n"));this.loaded++; }, () => this.failed = true);
         this.loaded++;
+        this.subdisplay = (document.getElementById("infoPanelCanvas") as HTMLCanvasElement).getContext("2d");
     }
 	
 	ready(){
@@ -281,32 +285,113 @@ class World{
 		}));
 	}
 	
-	draw(){
+    draw() {
+        let offset: { x: number, y: number } = { x: 0, y: 0 };
+        const TILE_X = this.TILE.X();
+        const TILE_Y = this.TILE.Y();
+        function translate(x, y) {
+            offset.x += x;
+            offset.y += y;
+            return (window as any).translate(x,y);
+        }
 		//console.log(this.entities);
 		push();
 		//noSmooth();
 		if(this.snapTo){
-			translate((width - this.TILE.X())/ 2, (height - this.TILE.Y()) / 2);
-			translate(-1 * this.snapTo.x * this.TILE.X(), -1 * this.snapTo.y * this.TILE.Y());
+            translate((width - TILE_X) / 2, (height - TILE_X) / 2);
+			translate(-1 * this.snapTo.x * TILE_X, -1 * this.snapTo.y * TILE_Y);
 		}
-		//translate(this.TILE.X / 2, this.TILE.Y / 2);
+
+        let mouseTile: { x: number, y: number } = {
+            x: floor((mouseX - offset.x) / TILE_X),
+            y: floor((mouseY - offset.y) / TILE_Y)
+        };
+
+        if (!(mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height)) mouseTile = null;
+
 		for(let x = 0;x < this.terrain.length;x++){
 			for(let y = 0;y < this.terrain[x].length;y++){
-				image(this.tex[this.terrain[x][y].tex], x * this.TILE.X(), y * this.TILE.Y(), this.TILE.X(), this.TILE.Y());
+                image(this.tex[this.terrain[x][y].tex], x * TILE_X, y * TILE_Y, TILE_X, TILE_Y);
 			}
-		}
+        }
+
+        if (!mouseIsPressed && mouseTile) {
+            fill(0, 0, 100, 100);
+            rect(mouseTile.x * TILE_X, mouseTile.y * TILE_Y, TILE_X, TILE_Y);
+        } 
+
 		this.entities.forEach(e=>{
 			push();
 			imageMode(CENTER);
-			translate(e.x * this.TILE.X(), e.y * this.TILE.Y());
-			translate(0.5 * this.TILE.X(), 0.5 * this.TILE.Y());
+			translate(e.x * TILE_X, e.y * TILE_Y);
+			translate(0.5 * TILE_X, 0.5 * TILE_Y);
 			if(e.rot){
 				rotate(e.rot * 0.5 * PI);
 			}
-			image(this.tex[e.tex], 0, 0, this.TILE.X(), this.TILE.Y());
+			image(this.tex[e.tex], 0, 0, TILE_X, TILE_Y);
 			pop();
-		});
-		pop();
+        });
+
+        if (mouseIsPressed && mouseTile) {
+            fill(0, 100, 0, 100);
+            rect(mouseTile.x * TILE_X, mouseTile.y * TILE_Y, TILE_X, TILE_Y);
+        } 
+        
+        pop();
+        this.subdisplay_data = drawSubdisplay(this.subdisplay, this.subdisplay_data, mouseTile, this);
 	}
 }
 export { World };
+
+function drawSubdisplay(ctx: CanvasRenderingContext2D, data: Object, mouseTile: { x: number, y: number }, world: World) {
+    if (data === undefined) data = { flickerClock: 0, barY: 0 };
+
+    //Clear canvas
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+
+    if (mouseTile) {
+        let imgCTX: HTMLCanvasElement;
+        if (mouseIsPressed) {
+            const entity = world.entities.filter(e => e.x == mouseTile.x && e.y == mouseTile.y)[0];
+            if (entity) {
+                imgCTX = (world.tex[entity.tex] as any).canvas;
+            }
+        } else {
+            imgCTX = (world.tex[world.terrain[mouseTile.x][mouseTile.y].tex] as any).canvas;
+        }
+        if (imgCTX) {
+            ctx.drawImage(imgCTX, 0, (ctx.canvas.height - ctx.canvas.width / 3) / 2, ctx.canvas.width / 3, ctx.canvas.width / 3);
+        }
+    } else {
+        ctx.font = "10px Courier New";
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillText(world.tester.results.map(t => t.desc + ": " + t.passed).join("\n"),0,ctx.canvas.height / 2);
+    }
+
+    //Draw overlay
+    ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+    data['flickerClock']++;
+    ctx.fillStyle = "rgba(255, 255, 255, " + (Math.random() / 100 / data['flickerClock']) + ")";
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+    if (data['flickerClock'] == 20) data['flickerClock'] = 0;
+
+    const bars = 50;
+    const barHeight = ctx.canvas.height / bars / 2;
+    ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
+    for (let y = 0; y < bars; y++) {
+        ctx.fillRect(0, y * 2 * barHeight, ctx.canvas.width, barHeight);
+    }
+
+    ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+
+    ctx.fillRect(0, data['barY'], ctx.canvas.width, ctx.canvas.height / 10);
+    data['barY']++;
+    if (data['barY'] > ctx.canvas.height * 2) {
+        data['barY'] = ctx.canvas.height / -10;
+    }
+    return data;
+}

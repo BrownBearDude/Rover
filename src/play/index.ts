@@ -77,6 +77,7 @@ function resizeToFit(div){
     let n : number = Math.min(div.offsetWidth, div.offsetHeight);
 	return [n,n];
 }
+
 (window as any).setup = setup;
 (window as any).draw = draw;
 (window as any).windowResized = windowResized;

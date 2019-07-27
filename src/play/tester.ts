@@ -14,11 +14,6 @@ class Tester {
         this.raw_code = code;
         this.reset(world, code);
     }
-    public getTests() {
-        return acorn.parse(this.raw_code).body
-            .filter(n => n.type == "ExpressionStatement" && n.expression.callee.name == "newTask")
-            .map(n => n.expression.arguments[0].value);
-    }
     test() {
         this.globalStorage = this.sandbox ? JSON.stringify(this.sandbox.pseudoToNative(this.sandbox.value)) : "{}";
         console.log(`var globalStorage = ${this.globalStorage};${this.code};globalStorage;`);
@@ -53,6 +48,10 @@ class Tester {
         this.code = `function newTask(d,f){if(!globalStorage[d]){globalStorage[d]={}};${rootName}_dump(d,f(globalStorage[d]))}${code}`;
         this._initApi = initApi;
         this.sandbox = undefined;
+
+        this.results = acorn.parse(this.raw_code).body
+            .filter(n => n.type == "ExpressionStatement" && n.expression.callee.name == "newTask")
+            .map(n => ({ desc: n.expression.arguments[0].value, passed: false }));
     }
 }
 export { Tester, testResult };
