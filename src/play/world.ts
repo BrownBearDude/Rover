@@ -71,13 +71,17 @@ class World{
 		//console.log(json);
 		this.entities = j.tests[index].entities;
 		this.terrain = j.tests[index].terrain;
-		if(!this.tex){
+        if (!this.tex) {
+            //Means that this is the first time loading
 			this.tex = {};
 			//console.log(json.tex);
-			Object.keys(j.tex).forEach(name =>{
-				this.loadCount++;		
-				loadImage(j.tex[name], img=>{this.tex[name] = img;this.loaded++});
-			});
+            for (let name in j.tex) {
+                if (j.tex.hasOwnProperty(name)) {
+                    this.loadCount++;
+                    loadImage(j.tex[name], img => { this.tex[name] = img; this.loaded++ });
+                }
+            }
+            window.document.title += " - " + j.meta.title;
         }
 	}
 
@@ -86,7 +90,7 @@ class World{
 			this.actionBuffer = this.actionBuffer.filter(f=>f["func"](f["data"]));
         } else if (this.sandbox) {
             this.testResults = this.tester.test();
-            if (this.testResults.filter(c => !c.passed).length == 0) { alert("MISSION SUCCESS") }
+            //if (this.testResults.filter(c => !c.passed).length == 0) { alert("MISSION SUCCESS") }
             //console.log();
 			this.sandbox.step();
 			let start = 0;
@@ -358,15 +362,22 @@ function drawSubdisplay(ctx: CanvasRenderingContext2D, data: Object, mouseTile: 
                 imgCTX = (world.tex[entity.tex] as any).canvas;
             }
         } else {
-            imgCTX = (world.tex[world.terrain[mouseTile.x][mouseTile.y].tex] as any).canvas;
+            try {
+                imgCTX = (world.tex[world.terrain[mouseTile.x][mouseTile.y].tex] as any).canvas;
+            } catch (e) {
+
+            }
         }
         if (imgCTX) {
             ctx.drawImage(imgCTX, 0, (ctx.canvas.height - ctx.canvas.width / 3) / 2, ctx.canvas.width / 3, ctx.canvas.width / 3);
         }
     } else {
         ctx.font = "10px Courier New";
-        ctx.fillStyle = "#FFFFFF";
-        ctx.fillText(world.tester.results.map(t => t.desc + ": " + t.passed).join("\n"),0,ctx.canvas.height / 2);
+        ctx.textBaseline = "hanging"; 
+        world.tester.results.forEach((t, i) => {
+            ctx.fillStyle = t.passed ? "#00FF00" : "#FFFFFF";
+            ctx.fillText(t.task, 0, i * 10);
+        });
     }
 
     //Draw overlay
@@ -381,7 +392,7 @@ function drawSubdisplay(ctx: CanvasRenderingContext2D, data: Object, mouseTile: 
 
     const bars = 50;
     const barHeight = ctx.canvas.height / bars / 2;
-    ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
+    ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
     for (let y = 0; y < bars; y++) {
         ctx.fillRect(0, y * 2 * barHeight, ctx.canvas.width, barHeight);
     }

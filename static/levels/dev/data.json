@@ -699,5 +699,9 @@
   },
   "sfx": {
     "botMove": "/audio/"
+  },
+  "meta": {
+	"title": "Getting started",
+	"desc": "Learn the basics of javascript and how to control a bot"
   }
 }

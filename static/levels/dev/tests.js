@@ -1,4 +1,4 @@
-newTask("Do three laps around the map", function(localStorage){
+newTask("namespace", function(localStorage){
 	log("localStorage", localStorage);
 	log("globalStorage", globalStorage);
 	if(localStorage.laps === undefined){
@@ -21,5 +21,8 @@ newTask("Do three laps around the map", function(localStorage){
 		}
 	}
 	localStorage.debugCallAmount++;
-	return localStorage.laps >= 3;
+	return {
+		"task": "Do three laps around the map (" + localStorage.laps + "/3)",
+		"passed": localStorage.laps >= 3,
+	};
 });
