@@ -29,12 +29,14 @@ class World{
     babelFR: any;
     subdisplay: CanvasRenderingContext2D;
     subdisplay_data: Object
+    crashMSG: string;
     constructor(worldID: string) {
         this.editorDeco = [];
         this.loaded = 0;
         this.loadCount = 1;
         this.actionBuffer = [];
         this.failed = false;
+        this.crashMSG = null;
 		this.TILE = {
 			X: ()=>width/10,
 			Y: ()=>height/10
@@ -68,9 +70,11 @@ class World{
 
     loadLevel(json: string, index: number) {
         let j = JSON.parse(json);
-		//console.log(json);
 		this.entities = j.tests[index].entities;
-		this.terrain = j.tests[index].terrain;
+        this.terrain = j.tests[index].terrain;
+        if (this.tester) {
+            this.tester.reset(this);
+        }
         if (!this.tex) {
             //Means that this is the first time loading
 			this.tex = {};
@@ -89,10 +93,14 @@ class World{
 		if(this.actionBuffer.length){
 			this.actionBuffer = this.actionBuffer.filter(f=>f["func"](f["data"]));
         } else if (this.sandbox) {
+            let deco_options = { inlineClassName: "codeActivity" };
             this.testResults = this.tester.test();
-            //if (this.testResults.filter(c => !c.passed).length == 0) { alert("MISSION SUCCESS") }
-            //console.log();
-			this.sandbox.step();
+            try {
+                this.sandbox.step();
+            } catch (e) {
+                this.crashMSG = e;
+                deco_options.inlineClassName = "codeError";
+            }
 			let start = 0;
 			let end = 0;
 			if (this.sandbox.stateStack.length) {
@@ -144,10 +152,9 @@ class World{
                 console.log("genStart", startLine, startChar);
                 console.log("genEnd", endLine, endChar);
                 editor.setValue(this.babelFR.code);
-                this.editorDeco = editor.deltaDecorations(this.editorDeco, [{ range: new monaco.Range(startLine + 2, startChar + 1, endLine + 1, endChar + 3), options: { inlineClassName: 'codeActivity' } }]);
+                this.editorDeco = editor.deltaDecorations(this.editorDeco, [{ range: new monaco.Range(startLine + 2, startChar + 1, endLine + 1, endChar + 3), options: deco_options }]);
             } else {
-                //console.log(startLine, endLine);
-                this.editorDeco = editor.deltaDecorations(this.editorDeco, [{ range: new monaco.Range(startLine + 1, startChar, endLine + 1, endChar), options: { inlineClassName: 'codeActivity' } }]);
+                this.editorDeco = editor.deltaDecorations(this.editorDeco, [{ range: new monaco.Range(startLine + 1, startChar, endLine + 1, endChar), options: deco_options }]);
             }
 		}
 	}

@@ -8,9 +8,11 @@ class Tester {
     public results: testResult[];
     private globalStorage: string;
     private code: string;
+    private raw_code: string;
     _initApi: (interpreter: Interpreter, scope: any) => void;
     constructor(world, code) {
-        this.reset(world, code);
+        this.raw_code = code;
+        this.reset(world);
     }
     test() {
         this.globalStorage = this.sandbox ? JSON.stringify(this.sandbox.pseudoToNative(this.sandbox.value)) : "{}";
@@ -32,9 +34,10 @@ class Tester {
         //this.sandbox.run();
         return this.results;
     }
-    reset(world, code, again = true) {
-        let _this = this;
-        let rootName: string = "_NATIVE_" + (Math.random() + "00000000000").slice(2, 12);
+    reset(world, again = true) {
+        const code = this.raw_code;
+        const _this = this;
+        const rootName: string = "_NATIVE_" + (Math.random() + "00000000000").slice(2, 12);
         //dumpFunc = `function ${dumpFunc}(arg){}`;
         function initApi(interpreter: Interpreter, scope) {
             interpreter.setProperty(scope, rootName + "_dump", interpreter.createNativeFunction(function (f) {
@@ -48,7 +51,7 @@ class Tester {
         this.sandbox = undefined;
         if (again) {
             this.test();
-            this.reset(world, code, false);
+            this.reset(world, false);
         }
     }
 }
