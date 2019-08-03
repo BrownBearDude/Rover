@@ -4,6 +4,7 @@
     "\\@types",
     "\\@types\\@babel",
     "\\src",
+    "\\src\\lib",
     "\\src\\play",
     "\\src\\play\\definitions"
   ],

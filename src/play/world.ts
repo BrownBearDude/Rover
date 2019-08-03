@@ -5,7 +5,7 @@ import * as monaco from "../../node_modules/monaco-editor/esm/vs/editor/editor.m
 import { Tester, testResult } from "./tester";
 import * as Babel from "@babel/standalone";
 import * as sourceMap from "../../node_modules/source-map/source-map";
-import p5 from "p5";
+import { string } from "prop-types";
 
 class World{
     //Todos: Define interfaces for entites, terrain, etc
@@ -29,14 +29,15 @@ class World{
     babelFR: any;
     subdisplay: CanvasRenderingContext2D;
     subdisplay_data: Object
-    crashMSG: string;
+    stackTrace: string;
+    prevRange: monaco.Range;
     constructor(worldID: string) {
         this.editorDeco = [];
         this.loaded = 0;
         this.loadCount = 1;
         this.actionBuffer = [];
         this.failed = false;
-        this.crashMSG = null;
+        this.stackTrace = null;
 		this.TILE = {
 			X: ()=>width/10,
 			Y: ()=>height/10
@@ -90,47 +91,41 @@ class World{
 	}
 
     step(editor: monaco.editor.IStandaloneCodeEditor) {
+        let _code = editor.getValue();
 		if(this.actionBuffer.length){
 			this.actionBuffer = this.actionBuffer.filter(f=>f["func"](f["data"]));
         } else if (this.sandbox) {
             let deco_options = { inlineClassName: "codeActivity" };
             this.testResults = this.tester.test();
+            //console.log(this.editorDeco);
+            let stack = this.sandbox.stateStack
+                .map(n => n.node)
+                .filter(n => n.start >= this.inject.length && n.end >= this.inject.length);
             try {
                 this.sandbox.step();
             } catch (e) {
-                this.crashMSG = e;
+                this.stackTrace = rewind(e, stack, _code, this.inject.length);
                 deco_options.inlineClassName = "codeError";
+                this.editorDeco = editor.deltaDecorations(this.editorDeco, [{ range: this.prevRange, options: deco_options }]);
+                return;
             }
-			let start = 0;
-			let end = 0;
+            let start = 0;
+            let end = 0;
+            let code: string = (window as any).buggyBabel ? this.babelFR.code : _code;
 			if (this.sandbox.stateStack.length) {
 				let node = this.sandbox.stateStack[this.sandbox.stateStack.length - 1].node;
 				start = node.start - this.inject.length;
 				end = node.end - this.inject.length;
-			}
-			let startLine = 0;
-			let endLine = 0;
-			let startChar = 0;
-            let endChar = 0;
-            let code: string = (window as any).buggyBabel ? this.babelFR.code : editor.getValue();
-			for(let i = 0;i <= end;i++){
-				if(code[i] == "\n"){
-					endChar = 0;
-					endLine++;
-					if(i <= start){
-						startChar = 0;
-						startLine++;
-					}
-				} else {
-					endChar++;
-					if(i <= start){
-						startChar++;
-					}
-				}
             }
+            let _res = toRowsAndColumns(code, start, end);
+            let startLine = _res.startLine;
+            let startChar = _res.startChar;
+            let endLine = _res.endLine;
+            let endChar = _res.endChar;
             console.log("start", startLine, startChar);
             console.log("end", endLine, endChar);
             console.log("orig", code.slice(start, end));
+
             /*
             let lg = (code) => {
                 let x = code.split("\n").slice(startLine, endLine);
@@ -142,6 +137,7 @@ class World{
                 console.log("mod", lg(code));
             } catch (e) { }//console.error(e) }*/
             //let debug = (window as any).debug;
+            this.prevRange = new monaco.Range(startLine + 1, startChar, endLine + 1, endChar);
             if ((window as any).buggyBabel) {
                 let converted = this.sourceMapConsumer.originalPositionFor({ line: startLine + 1, column: startChar });
                 startLine = converted.line;
@@ -154,7 +150,7 @@ class World{
                 editor.setValue(this.babelFR.code);
                 this.editorDeco = editor.deltaDecorations(this.editorDeco, [{ range: new monaco.Range(startLine + 2, startChar + 1, endLine + 1, endChar + 3), options: deco_options }]);
             } else {
-                this.editorDeco = editor.deltaDecorations(this.editorDeco, [{ range: new monaco.Range(startLine + 1, startChar, endLine + 1, endChar), options: deco_options }]);
+                this.editorDeco = editor.deltaDecorations(this.editorDeco, [{ range: this.prevRange, options: deco_options }]);
             }
 		}
 	}
@@ -184,13 +180,13 @@ class World{
             }
             interpreter.setProperty(scope, "_ALLBOTNAMES", interpreter.nativeToPseudo(_this.entities.map(e=>e.name)));
 		}
-		this.inject = [ //These functions are injected into the sandbox
+        this.inject = [ //These functions are injected into the sandbox
             "function ControllableEntity(name){this.name=name}",
             "_ALLBOTNAMES = _ALLBOTNAMES.map(function(n){return new ControllableEntity(n)});",
             "var Bots = {};",
             "_ALLBOTNAMES.forEach(function(x){Bots[x.name]=x});",
             "delete _ALLBOTNAMES;"
-		].join("\n");
+        ].join("\n\t");//"(function(){\n\t" +  + "\n})();"
 		
 		this.sandbox = new Interpreter(this.inject + code, initApi);
         //this.sandbox.appendCode(");
@@ -350,7 +346,7 @@ class World{
         
         pop();
         this.subdisplay_data = drawSubdisplay(this.subdisplay, this.subdisplay_data, mouseTile, this);
-	}
+    }
 }
 export { World };
 
@@ -412,4 +408,43 @@ function drawSubdisplay(ctx: CanvasRenderingContext2D, data: Object, mouseTile: 
         data['barY'] = ctx.canvas.height / -10;
     }
     return data;
+}
+
+function rewind(error, stack: any[], code: string, offsetVal: number) {
+    function getName(index, node: { start: number, end: number, type: string, expression?: { callee: { name: string }, type: string } }): string {
+        if (node.type == "ExpressionStatement") {
+            if (node.expression.type == "CallExpression") {
+                return (node.expression.callee.name || "<anonymous>");
+            }
+        }
+        return index > 0 ? null : "<anonymous>";
+    }
+    return ["Uncaught " + error.name + ": " + error.message, ...stack.reverse().map((node, index) => {
+        let res = toRowsAndColumns(code, node.start - offsetVal, node.end - offsetVal);
+        let name = getName(index, node);
+        return name ? name + " (line " + (res.startLine + 1) + " char " + res.startChar + ")" : "";
+    }).filter(s => s.length)].join("\n\tat ");
+}
+//Converts a range of characters (0 - 10 say) into starting and ending rows and columns
+function toRowsAndColumns(code: string, start = 0, end = 0) {
+    let startLine = 0;
+    let endLine = 0;
+    let startChar = 0;
+    let endChar = 0;
+    for (let i = 0; i <= end; i++) {
+        if (code[i] == "\n") {
+            endChar = 0;
+            endLine++;
+            if (i <= start) {
+                startChar = 0;
+                startLine++;
+            }
+        } else {
+            endChar++;
+            if (i <= start) {
+                startChar++;
+            }
+        }
+    }
+    return {startLine, endLine, startChar, endChar};
 }

@@ -61,10 +61,17 @@ function draw() {
         infoDiv.innerHTML = window.marked(world.desc[0]);
 	}
 	background(0);
-	if(world.sandbox){
-		world.step(editor);
+    if (world.sandbox) {
+        if (world.stackTrace) {
+            if (!(window as any).errorMSG) {
+            
+                //(window as any).errorMSG = rewind(world.crashMSG);
+            }
+        } else {
+            world.step(editor);
+        }
 	}
-	world.draw();
+    world.draw();
 }
 
 function windowResized() {
@@ -116,6 +123,7 @@ function resizeToFit(div){
 (window as any).resetState = function () {
     const l = (window as any).unlockFunc().l;
     world.sandbox = undefined;
+    world.stackTrace = undefined;
     world.actionBuffer = [];
     world.editorDeco = editor.deltaDecorations(world.editorDeco, []);
     world.loadLevel(world.json, l);
@@ -144,6 +152,11 @@ function resizeToFit(div){
     testSelectInput.max = JSON.parse(world.json).tests.length + "";
     testSelectInput.min = "1";
 };
+
+function rewind(error) {
+    //let rewound = error.mess;
+    return error;
+}
 /*
 //Code here excecutes once
 var fib = [];
