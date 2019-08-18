@@ -25,6 +25,11 @@ function setup() {
     noSmooth();
     canvasDiv = document.getElementById('canvasContainer');
 
+    monaco.languages.typescript.javascriptDefaults.addExtraLib([
+        "declare Bots: { [key: string]: Bot };",
+        "declare Bot: {};"
+    ].join('\n'), 'filename/facts.d.ts');
+
     editor = monaco.editor.create(document.getElementById('editor'), {
         value: [
             "//Code here excecutes once",
@@ -115,6 +120,27 @@ function resizeToFit(div){
     btnLeft.disabled = true;
     btnRight.disabled = true;
     testSelectInput.disabled = true;
+
+    let tested = 0;
+    const max = parseInt(testSelectInput.max);
+
+    world.resetCallbacks();
+    world.on("testComplete", (world: World) => {
+        if (++tested < max) {
+            world.sandbox = undefined;
+            world.stackTrace = undefined;
+            world.actionBuffer = [];
+            world.editorDeco = editor.deltaDecorations(world.editorDeco, []);
+            if (++testSelectInput.valueAsNumber > max) {
+                testSelectInput.value = testSelectInput.min;
+            }
+            world.loadLevel(world.json, testSelectInput.valueAsNumber - 1);
+            world.loadCode(editor.getValue());
+        } else {
+            alert("YATTA");
+            (window as any).resetState();
+        }
+    });
 
     world.loadLevel(world.json, testSelectInput.valueAsNumber - 1);
     world.loadCode(editor.getValue());

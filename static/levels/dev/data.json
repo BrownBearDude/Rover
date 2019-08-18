@@ -353,12 +353,16 @@
     {
       "entities": [
         {
-          "x": 1,
-          "y": 1,
-          "rot": 0,
+          "x": 9,
+          "y": 0,
+          "rot": 1,
           "tex": "rover",
           "name": "rover",
-          "controllable": true
+          "inherits": {
+            "ControllableEntity": {
+              "moveSFX": "move"
+            }
+          }
         },
         {
           "x": 4,
@@ -366,7 +370,11 @@
           "rot": 0,
           "tex": "rover",
           "name": "rover2",
-          "controllable": true
+          "inherits": {
+            "ControllableEntity": {
+              "moveSFX": "move"
+            }
+          }
         }
       ],
       "terrain": [

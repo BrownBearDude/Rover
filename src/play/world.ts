@@ -31,6 +31,7 @@ class World{
     subdisplay_data: Object
     stackTrace: string;
     prevRange: monaco.Range;
+    callbacks: { [key: string]: (world: World) => void };
     constructor(worldID: string) {
         this.editorDeco = [];
         this.loaded = 0;
@@ -95,7 +96,7 @@ class World{
 		if(this.actionBuffer.length){
 			this.actionBuffer = this.actionBuffer.filter(f=>f["func"](f["data"]));
         } else if (this.sandbox) {
-            let deco_options = { inlineClassName: "codeActivity" };
+            const deco_options = { inlineClassName: "codeActivity" };
             this.testResults = this.tester.test();
             //console.log(this.editorDeco);
             let stack = this.sandbox.stateStack
@@ -105,8 +106,15 @@ class World{
                 this.sandbox.step();
             } catch (e) {
                 this.stackTrace = rewind(e, stack, _code, this.inject.length);
-                deco_options.inlineClassName = "codeError";
-                this.editorDeco = editor.deltaDecorations(this.editorDeco, [{ range: this.prevRange, options: deco_options }]);
+                this.editorDeco = editor.deltaDecorations(this.editorDeco, [{
+                    range: this.prevRange,
+                    options: {
+                        inlineClassName: "codeError",
+                        hoverMessage: [{
+                            value: 'Uncaught ' + (e.name ? (e.name + ": " + e.message) : e)
+                        }]
+                    }
+                }]);
                 return;
             }
             let start = 0;
@@ -116,6 +124,10 @@ class World{
 				let node = this.sandbox.stateStack[this.sandbox.stateStack.length - 1].node;
 				start = node.start - this.inject.length;
 				end = node.end - this.inject.length;
+            }
+            if ((window as any).buggyBabel) {
+                start += this.inject.length;
+                end += this.inject.length;
             }
             let _res = toRowsAndColumns(code, start, end);
             let startLine = _res.startLine;
@@ -152,7 +164,10 @@ class World{
             } else {
                 this.editorDeco = editor.deltaDecorations(this.editorDeco, [{ range: this.prevRange, options: deco_options }]);
             }
-		}
+        }
+        if (this.testResults.filter(tr => !tr.passed).length == 0 && this.callbacks["testComplete"]) {
+            this.callbacks["testComplete"](this);
+        }
 	}
 
     async loadCode(code: string) {
@@ -178,15 +193,22 @@ class World{
 				//console.log(k, apiFuncs[k]);
                 interpreter.setProperty(scope, k, interpreter.createNativeFunction(apiFuncs[k]));
             }
-            interpreter.setProperty(scope, "_ALLBOTNAMES", interpreter.nativeToPseudo(_this.entities.map(e=>e.name)));
+            interpreter.setProperty(scope, "_ALL_ENTITY_NAMES", interpreter.nativeToPseudo(_this.entities.map(e=>e.name)));
 		}
         this.inject = [ //These functions are injected into the sandbox
             "function ControllableEntity(name){this.name=name}",
-            "_ALLBOTNAMES = _ALLBOTNAMES.map(function(n){return new ControllableEntity(n)});",
             "var Bots = {};",
-            "_ALLBOTNAMES.forEach(function(x){Bots[x.name]=x});",
-            "delete _ALLBOTNAMES;"
+            "_ALL_ENTITY_NAMES.forEach(function(name){Bots[name] = new ControllableEntity(name)});",
+            "delete _ALL_ENTITY_NAMES;"
         ].join("\n\t");//"(function(){\n\t" +  + "\n})();"
+
+        /*
+         * Frick, can't think of how to fix this.
+         * Problem is that "visible" entities that live in the interpreter are linked with "true" entities that are real.
+         * THe problem arises when you want to access a normally "invisible" entity.
+         * Right now, they are invisible because they simply haven't been generated yet.
+         * That's not good.
+         */
 		
 		this.sandbox = new Interpreter(this.inject + code, initApi);
         //this.sandbox.appendCode(");
@@ -220,10 +242,6 @@ class World{
 			let name = this.properties.name;
 			let entity = _this.entities.filter(function(e){return e.inherits["ControllableEntity"]&&e.name==name})[0];
 			turnBase(entity, -1);
-			//entity.rot--;
-			//if(entity.rot < 0){
-			//	entity.rot = 3;
-			//}
 			_this.snapTo = entity;
 		}));
 		
@@ -231,7 +249,6 @@ class World{
 			let name = this.properties.name;
             let entity = _this.entities.filter(function (e) { return e.inherits["ControllableEntity"]&&e.name==name})[0];
 			turnBase(entity, 1);
-			//entity.rot++;
 			_this.snapTo = entity;
 		}));
 		
@@ -346,6 +363,12 @@ class World{
         
         pop();
         this.subdisplay_data = drawSubdisplay(this.subdisplay, this.subdisplay_data, mouseTile, this);
+    }
+    on(name: string, callback: (world: World) => void) {
+        this.callbacks[name] = callback;
+    }
+    resetCallbacks() {
+        this.callbacks = {};
     }
 }
 export { World };

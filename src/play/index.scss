@@ -120,10 +120,9 @@ input[type=number] {
 
 button {
     border: 1px solid #999999;
-    background-color: slategrey
-}
+    background-color: slategrey;
 
-button:disabled,
-button[disabled] {
-    opacity: 0.5;
+    :disabled {
+        color: black;
+    }
 }
