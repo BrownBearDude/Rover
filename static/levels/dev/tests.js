@@ -1,6 +1,6 @@
 newTask("namespace", function(localStorage){
-	log("localStorage", localStorage);
-	log("globalStorage", globalStorage);
+	//log("localStorage", localStorage);
+	//log("globalStorage", globalStorage);
 	if(localStorage.laps === undefined){
 		localStorage.laps = 0;
 		localStorage.index = 0;

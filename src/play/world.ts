@@ -21,7 +21,6 @@ class World{
     failed: boolean;
     editorDeco: string[];
     desc: string[];
-    inject: string;
     snapTo: any;
     tester: Tester;
     testResults: testResult[];
@@ -32,7 +31,9 @@ class World{
     stackTrace: string;
     prevRange: monaco.Range;
     callbacks: { [key: string]: (world: World) => void };
+    stack_highlight_override: number;
     constructor(worldID: string) {
+        this.stack_highlight_override = null;
         this.editorDeco = [];
         this.loaded = 0;
         this.loadCount = 1;
@@ -94,18 +95,20 @@ class World{
     step(editor: monaco.editor.IStandaloneCodeEditor) {
         let _code = editor.getValue();
 		if(this.actionBuffer.length){
-			this.actionBuffer = this.actionBuffer.filter(f=>f["func"](f["data"]));
+			this.actionBuffer = this.actionBuffer.filter(f => f["func"](f["data"]));
         } else if (this.sandbox) {
             const deco_options = { inlineClassName: "codeActivity" };
             this.testResults = this.tester.test();
             //console.log(this.editorDeco);
             let stack = this.sandbox.stateStack
                 .map(n => n.node)
-                .filter(n => n.start >= this.inject.length && n.end >= this.inject.length);
+                .filter(n => n.start >= 0 && n.end >= 0);
+            this.stack_highlight_override = null;
             try {
                 this.sandbox.step();
+                //console.log("Stepped.");
             } catch (e) {
-                this.stackTrace = rewind(e, stack, _code, this.inject.length);
+                this.stackTrace = rewind(e, stack, _code, 0);
                 this.editorDeco = editor.deltaDecorations(this.editorDeco, [{
                     range: this.prevRange,
                     options: {
@@ -120,24 +123,25 @@ class World{
             let start = 0;
             let end = 0;
             let code: string = (window as any).buggyBabel ? this.babelFR.code : _code;
-			if (this.sandbox.stateStack.length) {
-				let node = this.sandbox.stateStack[this.sandbox.stateStack.length - 1].node;
-				start = node.start - this.inject.length;
-				end = node.end - this.inject.length;
+            if (this.sandbox.stateStack.length) {
+                let node = this.sandbox.stateStack[this.stack_highlight_override === null ? (this.sandbox.stateStack.length - 1) : this.stack_highlight_override].node;
+                start = node.start;// - this.inject.length;
+                end = node.end;// - this.inject.length;
             }
             if ((window as any).buggyBabel) {
-                start += this.inject.length;
-                end += this.inject.length;
+                //start += this.inject.length;
+                //end += this.inject.length;
             }
             let _res = toRowsAndColumns(code, start, end);
             let startLine = _res.startLine;
             let startChar = _res.startChar;
             let endLine = _res.endLine;
             let endChar = _res.endChar;
+            /*
             console.log("start", startLine, startChar);
             console.log("end", endLine, endChar);
             console.log("orig", code.slice(start, end));
-
+            */
             /*
             let lg = (code) => {
                 let x = code.split("\n").slice(startLine, endLine);
@@ -181,39 +185,118 @@ class World{
         this.sourceMapConsumer = await new sourceMap.SourceMapConsumer(babelFileResult.map);
         this.babelFR = babelFileResult;
         console.log("Converted babel code:\n" + code);
-		let _this: this = this;
-		function initApi(interpreter, scope) {
-			// Add native api functions
-			let apiFuncs = { //These functions are native
-                _NATIVE_getBot: function (name) { return _this.entities.filter(e => e.inherits["ControllableEntity"] && e.name == name)[0]},
-				done: function(){return false},
-				log: console.log
-			};
-			for(let k in apiFuncs){
-				//console.log(k, apiFuncs[k]);
-                interpreter.setProperty(scope, k, interpreter.createNativeFunction(apiFuncs[k]));
+        let _this: this = this;
+
+        let turnBase = function (entity, rot) {
+            _this.actionBuffer.push({
+                "func": function (data) {
+                    entity.rot += rot / 10;
+                    data.n++;
+                    if (data.n >= 10) {
+                        entity.rot = data.target;
+                        if (entity.rot < 0) {
+                            entity.rot = 3;
+                        }
+                        if (entity.rot > 3) {
+                            entity.rot = 0;
+                        }
+                        return false;
+                    }
+                    return true;
+                },
+                "data": { "n": 0, "target": entity.rot + rot }
+            });
+        };
+        const _sandboxed_functionCalls = {
+            ControllableEntity: {
+                turnLeft: function (entity) {
+                    turnBase(entity, -1);
+                    _this.snapTo = entity;
+                },
+                turnRight: function (entity) {
+                    turnBase(entity, 1);
+                    _this.snapTo = entity;
+                },
+                move: function (entity) {
+                    _this.actionBuffer.push({
+                        func: function (data) {
+                            switch (entity.rot) {
+                                case 0:
+                                    entity.y += 0.1;
+                                    break;
+                                case 1:
+                                    entity.x -= 0.1;
+                                    break;
+                                case 2:
+                                    entity.y -= 0.1;
+                                    break;
+                                case 3:
+                                    entity.x += 0.1;
+                                    break;
+                            }
+                            data.n++;
+                            if (data.n < 10) {
+                                return true;
+                            }
+                            entity.x = Math.round(entity.x);
+                            entity.y = Math.round(entity.y);
+                            return false;
+                        },
+                        data: { n: 0, target: 0 }
+                    });
+                    _this.snapTo = entity;
+                }
             }
-            interpreter.setProperty(scope, "_ALL_ENTITY_NAMES", interpreter.nativeToPseudo(_this.entities.map(e=>e.name)));
+        }
+        function initApi(interpreter: Interpreter, scope) {
+            function _request_action(entityName: string, className: string, funcName: string, args: IArguments) {
+                _this.stack_highlight_override = _this.sandbox.stateStack.length - 5;
+                _sandboxed_functionCalls[className][funcName](_this.entities.filter(entity => entity.name == entityName)[0], args);
+            }
+            interpreter.setProperty(scope, "_request_action", interpreter.createNativeFunction(_request_action));
+            interpreter.setProperty(scope, "_ALL_RAW_ENTITIES", interpreter.nativeToPseudo(_this.entities));
 		}
-        this.inject = [ //These functions are injected into the sandbox
-            "function ControllableEntity(name){this.name=name}",
+        const inject = [ //These functions are injected into the sandbox
             "var Bots = {};",
-            "_ALL_ENTITY_NAMES.forEach(function(name){Bots[name] = new ControllableEntity(name)});",
-            "delete _ALL_ENTITY_NAMES;"
-        ].join("\n\t");//"(function(){\n\t" +  + "\n})();"
+            "var _ALL_LINKED_ENTITIES;",
+            "(function(){",
+            "   var request_action = _request_action", //Store native function in private var
+            "   var creators = {",
+            "       ControllableEntity: function(ENTITY, RAW_ENTITY){",
+            "           Bots[RAW_ENTITY.name] = ENTITY;",
+            "           ENTITY.turnLeft = function(){return request_action(RAW_ENTITY.name, 'ControllableEntity', 'turnLeft', arguments)};",
+            "           ENTITY.turnRight = function(){return request_action(RAW_ENTITY.name, 'ControllableEntity', 'turnRight', arguments)};",
+            "           ENTITY.move = function(){return request_action(RAW_ENTITY.name, 'ControllableEntity', 'move', arguments)};",
+            "           return ENTITY;",
+            "       }",
+            "   }",
+            "   _ALL_LINKED_ENTITIES = _ALL_RAW_ENTITIES.map(function(RAW_ENTITY){",
+            "       var ENTITY = {};",
+            "       for(var inherit in RAW_ENTITY.inherits){",
+            "           ENTITY = creators[inherit](ENTITY, RAW_ENTITY);",
+            "       }",
+            "       return ENTITY;",
+            "   });",
+            "})();",
+            "_ALL_RAW_ENTITIES = undefined;", //Remove data about raw entities
+            "_request_action = undefined;" //Remove native function
+        ].join("\n");//"(function(){\n\t" +  + "\n})();"
 
         /*
          * Frick, can't think of how to fix this.
          * Problem is that "visible" entities that live in the interpreter are linked with "true" entities that are real.
-         * THe problem arises when you want to access a normally "invisible" entity.
+         * The problem arises when you want to access a normally "invisible" entity.
          * Right now, they are invisible because they simply haven't been generated yet.
          * That's not good.
+         * 
+         * Okay, I have a solution. ish.
+         * 1. Pre-generate all entities
+         * 2. Grab from entities
          */
 		
-		this.sandbox = new Interpreter(this.inject + code, initApi);
-        //this.sandbox.appendCode(");
+        this.sandbox = new Interpreter(inject, initApi);
         //let allbots = this.sandbox.getValueFromScope('ControllableEntity');
-
+        /*
 		let ControllableEntity = this.sandbox.getValueFromScope('ControllableEntity');
 		let ControllableEntityPrototype = this.sandbox.getProperty(ControllableEntity, 'prototype');
 		
@@ -306,7 +389,10 @@ class World{
 			window.setInterval(function(){
 				alert(document.body.innerHTML);
 			}, 5000);
-		}));
+        }));
+        */
+        this.sandbox.run();
+        this.sandbox.appendCode(code);
 	}
 	
     draw() {

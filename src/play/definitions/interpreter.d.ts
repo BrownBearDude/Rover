@@ -62,6 +62,12 @@ declare class Interpreter {
     pseudoToNative(pseudoObj: any, opt_cycles?: any): any;
 
     /**
+     * Appends extra code to the interpreter.
+     * @param {!String} code Code to append.
+     */
+    appendCode(code: string): void;
+
+    /**
      * The result of the last statement executed.
      */
     value: any;
