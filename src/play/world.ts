@@ -5,7 +5,7 @@ import * as monaco from "../../node_modules/monaco-editor/esm/vs/editor/editor.m
 import { Tester, testResult } from "./tester";
 import * as Babel from "@babel/standalone";
 import * as sourceMap from "../../node_modules/source-map/source-map";
-import { string } from "prop-types";
+import { string, object } from "prop-types";
 
 class World{
     //Todos: Define interfaces for entites, terrain, etc
@@ -124,7 +124,15 @@ class World{
             let end = 0;
             let code: string = (window as any).buggyBabel ? this.babelFR.code : _code;
             if (this.sandbox.stateStack.length) {
-                let node = this.sandbox.stateStack[this.stack_highlight_override === null ? (this.sandbox.stateStack.length - 1) : this.stack_highlight_override].node;
+                
+                let node = this.sandbox.stateStack[this.sandbox.stateStack.length - 1].node;
+                for (let i = 2; node.__IS_POLYFILL__; i++) {
+                    if (!this.sandbox.stateStack[this.sandbox.stateStack.length - i]) {
+                        node = this.sandbox.stateStack[this.sandbox.stateStack.length - i + 1].node;
+                        break;
+                    }
+                    node = this.sandbox.stateStack[this.sandbox.stateStack.length - i].node;
+                }
                 start = node.start;// - this.inject.length;
                 end = node.end;// - this.inject.length;
             }
@@ -177,14 +185,15 @@ class World{
     async loadCode(code: string) {
         //throw Error("TEST");
         //window.babel = Babel;
-        const babelFileResult: any = Babel.transform(code, { presets: ['es2015'], "sourceMaps": true }); //TODO: Add types for babel
+        let babelFileResult: any;
         //const babelFileResult: any = {};
         if ((window as any).buggyBabel) {
+            babelFileResult = Babel.transform(code, { presets: ['es2015'], "sourceMaps": true }); //TODO: Add types for babel
+            this.sourceMapConsumer = await new sourceMap.SourceMapConsumer(babelFileResult.map);
             code = babelFileResult.code;
         }
-        this.sourceMapConsumer = await new sourceMap.SourceMapConsumer(babelFileResult.map);
         this.babelFR = babelFileResult;
-        console.log("Converted babel code:\n" + code);
+        //console.log("Converted babel code:\n" + code);
         let _this: this = this;
 
         let turnBase = function (entity, rot) {
@@ -220,29 +229,34 @@ class World{
                 move: function (entity) {
                     _this.actionBuffer.push({
                         func: function (data) {
-                            switch (entity.rot) {
-                                case 0:
-                                    entity.y += 0.1;
-                                    break;
-                                case 1:
-                                    entity.x -= 0.1;
-                                    break;
-                                case 2:
-                                    entity.y -= 0.1;
-                                    break;
-                                case 3:
-                                    entity.x += 0.1;
-                                    break;
+                            const dir = [
+                                { x: 0, y: 1 },
+                                { x: -1, y: 0 },
+                                { x: 0, y: -1 },
+                                { x: 1, y: 0 },
+                            ];
+                            function traversable(x: number, y: number): boolean {
+                                let row = _this.terrain[x];
+                                if (!row) {
+                                    return false;
+                                }
+                                let tile = row[y];
+                                if (!tile) {
+                                    return false;
+                                }
+                                return true;
                             }
-                            data.n++;
-                            if (data.n < 10) {
+                            if (data.n == 0 && !traversable(entity.x + dir[entity.rot].x, entity.y + dir[entity.rot].y)) return false;
+                            entity.x += dir[entity.rot].x / 10;
+                            entity.y += dir[entity.rot].y / 10;
+                            if (++data.n < 10) {
                                 return true;
                             }
                             entity.x = Math.round(entity.x);
                             entity.y = Math.round(entity.y);
                             return false;
                         },
-                        data: { n: 0, target: 0 }
+                        data: { n: 0 }
                     });
                     _this.snapTo = entity;
                 }
@@ -256,7 +270,7 @@ class World{
             interpreter.setProperty(scope, "_request_action", interpreter.createNativeFunction(_request_action));
             interpreter.setProperty(scope, "_ALL_RAW_ENTITIES", interpreter.nativeToPseudo(_this.entities));
 		}
-        const inject = [ //These functions are injected into the sandbox
+        const polyfill = [ //These functions are injected into the sandbox
             "var Bots = {};",
             "var _ALL_LINKED_ENTITIES;",
             "(function(){",
@@ -281,7 +295,28 @@ class World{
             "_ALL_RAW_ENTITIES = undefined;", //Remove data about raw entities
             "_request_action = undefined;" //Remove native function
         ].join("\n");//"(function(){\n\t" +  + "\n})();"
-
+        let polyfill_ast = (window as any).acorn.parse(polyfill, (Interpreter as any).PARSE_OPTIONS);
+        console.log("AST: ", polyfill_ast);
+        let mark_stack: Object[] = [polyfill_ast];
+        while (mark_stack.length) { //Dirty mark nodes
+            let mark_obj = mark_stack.pop();
+            if (mark_obj && typeof mark_obj == "object" && !mark_obj["__IS_POLYFILL__"]) {
+                mark_obj["__IS_POLYFILL__"] = true;
+                Object.keys(mark_obj).forEach(k => mark_stack.push(mark_obj[k]));
+                /*
+                if (mark_obj["body"]) {
+                    mark_obj["body"].forEach(o => mark_stack.push(o));
+                }
+                if (mark_obj["declarations"]) {
+                    mark_obj["declarations"].forEach(o => mark_stack.push(o));
+                }
+                if (mark_obj["expression"]) {
+                    mark_stack.push(mark_obj["expression"]);
+                }
+                */
+            }
+        }
+        
         /*
          * Frick, can't think of how to fix this.
          * Problem is that "visible" entities that live in the interpreter are linked with "true" entities that are real.
@@ -293,8 +328,7 @@ class World{
          * 1. Pre-generate all entities
          * 2. Grab from entities
          */
-		
-        this.sandbox = new Interpreter(inject, initApi);
+        this.sandbox = new Interpreter(polyfill_ast, initApi);
         //let allbots = this.sandbox.getValueFromScope('ControllableEntity');
         /*
 		let ControllableEntity = this.sandbox.getValueFromScope('ControllableEntity');

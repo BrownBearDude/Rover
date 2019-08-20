@@ -100,18 +100,21 @@ function resizeToFit(div){
     let btnLeft: HTMLButtonElement = parent.getElementsByClassName("buttonLeft")[0] as HTMLButtonElement;
     let btnRight: HTMLButtonElement = parent.getElementsByClassName("buttonRight")[0] as HTMLButtonElement;
 
-    const originalState = { //Save state of buttons
+    let originalState = { //Save state of buttons
         left: btnLeft.disabled,
-        right: btnRight.disabled
+        right: btnRight.disabled,
+        origLevel: testSelectInput.value
     };
 
-    const origLevel: Object = { l: testSelectInput.valueAsNumber - 1 };
+    let origLevel: Object = { l: testSelectInput.valueAsNumber - 1 };
     (window as any).unlockFunc = function(){ //Create unlocking function
         editor.updateOptions({ readOnly: false });
         ctx.disabled = false;
         btnLeft.disabled = originalState.left;
         btnRight.disabled = originalState.right;
+        testSelectInput.value = originalState.origLevel;
         testSelectInput.disabled = false;
+        originalState = undefined;
         return origLevel;
     };
 
@@ -122,7 +125,7 @@ function resizeToFit(div){
     testSelectInput.disabled = true;
 
     let tested = 0;
-    const max = parseInt(testSelectInput.max);
+    let max = parseInt(testSelectInput.max);
 
     world.resetCallbacks();
     world.on("testComplete", (world: World) => {
@@ -147,7 +150,7 @@ function resizeToFit(div){
 };
 
 (window as any).resetState = function () {
-    const l = (window as any).unlockFunc().l;
+    let l = (window as any).unlockFunc().l;
     world.sandbox = undefined;
     world.stackTrace = undefined;
     world.actionBuffer = [];
