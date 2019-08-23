@@ -31,9 +31,8 @@ class World{
     stackTrace: string;
     prevRange: monaco.Range;
     callbacks: { [key: string]: (world: World) => void };
-    stack_highlight_override: number;
+    sent_data: any
     constructor(worldID: string) {
-        this.stack_highlight_override = null;
         this.editorDeco = [];
         this.loaded = 0;
         this.loadCount = 1;
@@ -98,12 +97,11 @@ class World{
 			this.actionBuffer = this.actionBuffer.filter(f => f["func"](f["data"]));
         } else if (this.sandbox) {
             const deco_options = { inlineClassName: "codeActivity" };
-            this.testResults = this.tester.test();
+            this.testResults = this.tester.test(this.sent_data);
             //console.log(this.editorDeco);
             let stack = this.sandbox.stateStack
                 .map(n => n.node)
                 .filter(n => n.start >= 0 && n.end >= 0);
-            this.stack_highlight_override = null;
             try {
                 this.sandbox.step();
                 //console.log("Stepped.");
@@ -217,12 +215,12 @@ class World{
             });
         };
         const _sandboxed_functionCalls = {
-            ControllableEntity: {
-                turnLeft: function (entity) {
+            Rover: {
+                turn_left: function (entity) {
                     turnBase(entity, -1);
                     _this.snapTo = entity;
                 },
-                turnRight: function (entity) {
+                turn_right: function (entity) {
                     turnBase(entity, 1);
                     _this.snapTo = entity;
                 },
@@ -259,34 +257,59 @@ class World{
                         data: { n: 0 }
                     });
                     _this.snapTo = entity;
+                },
+                sensor_read_forward_tile: function (entity) {
+                    const dir = [
+                        { x: 0, y: 1 },
+                        { x: -1, y: 0 },
+                        { x: 0, y: -1 },
+                        { x: 1, y: 0 },
+                    ];
+                    alert("yee");
+                    console.log(entity);
+                    let column = _this.terrain[entity.x + dir[entity.rot].x]
+                    if (!column) return _this.sandbox.nativeToPseudo({});
+                    let tile = column[entity.y + dir[entity.rot].y];
+                    if (!tile) return _this.sandbox.nativeToPseudo({});
+                    return _this.sandbox.nativeToPseudo(tile.visible_properties || {});
                 }
             }
         }
         function initApi(interpreter: Interpreter, scope) {
             function _request_action(entityName: string, className: string, funcName: string, args: IArguments) {
-                _this.stack_highlight_override = _this.sandbox.stateStack.length - 5;
-                _sandboxed_functionCalls[className][funcName](_this.entities.filter(entity => entity.name == entityName)[0], args);
+                return _sandboxed_functionCalls[className][funcName](_this.entities.filter(entity => entity.name == entityName)[0], args);
             }
+            interpreter.setProperty(scope, "log", interpreter.createNativeFunction(function () { window.console.log(...arguments) }));
             interpreter.setProperty(scope, "_request_action", interpreter.createNativeFunction(_request_action));
             interpreter.setProperty(scope, "_ALL_RAW_ENTITIES", interpreter.nativeToPseudo(_this.entities));
+            interpreter.setProperty(scope, "send_data", interpreter.createNativeFunction(function (data) { _this.sent_data = data }));
 		}
         const polyfill = [ //These functions are injected into the sandbox
             "var Bots = {};",
-            "var _ALL_LINKED_ENTITIES;",
             "(function(){",
             "   var request_action = _request_action", //Store native function in private var
             "   var creators = {",
-            "       ControllableEntity: function(ENTITY, RAW_ENTITY){",
+            "       Accessible: function(ENTITY, RAW_ENTITY){",
             "           Bots[RAW_ENTITY.name] = ENTITY;",
-            "           ENTITY.turnLeft = function(){return request_action(RAW_ENTITY.name, 'ControllableEntity', 'turnLeft', arguments)};",
-            "           ENTITY.turnRight = function(){return request_action(RAW_ENTITY.name, 'ControllableEntity', 'turnRight', arguments)};",
-            "           ENTITY.move = function(){return request_action(RAW_ENTITY.name, 'ControllableEntity', 'move', arguments)};",
             "           return ENTITY;",
+            "       },",
+            "       Rover: function(ENTITY, RAW_ENTITY){",
+            "           ENTITY.turn_left = function(){return request_action(RAW_ENTITY.name, 'Rover', 'turn_left', arguments)};",
+            "           ENTITY.turn_right = function(){return request_action(RAW_ENTITY.name, 'Rover', 'turn_right', arguments)};",
+            "           ENTITY.move = function(){return request_action(RAW_ENTITY.name, 'Rover', 'move', arguments)};",
+            "           ENTITY.sensor = {",
+            "               read_front_tile: function(){",
+            "                   return request_action(RAW_ENTITY.name, 'Rover', 'sensor_read_forward_tile', arguments);",
+            "               } ",
+            "           }",
+            "           return ENTITY; ",
             "       }",
             "   }",
-            "   _ALL_LINKED_ENTITIES = _ALL_RAW_ENTITIES.map(function(RAW_ENTITY){",
+            "   var _ALL_LINKED_ENTITIES = _ALL_RAW_ENTITIES.map(function(RAW_ENTITY){",
             "       var ENTITY = {};",
+            "       log('TEST');",
             "       for(var inherit in RAW_ENTITY.inherits){",
+            "           log(ENTITY);",
             "           ENTITY = creators[inherit](ENTITY, RAW_ENTITY);",
             "       }",
             "       return ENTITY;",
@@ -303,17 +326,6 @@ class World{
             if (mark_obj && typeof mark_obj == "object" && !mark_obj["__IS_POLYFILL__"]) {
                 mark_obj["__IS_POLYFILL__"] = true;
                 Object.keys(mark_obj).forEach(k => mark_stack.push(mark_obj[k]));
-                /*
-                if (mark_obj["body"]) {
-                    mark_obj["body"].forEach(o => mark_stack.push(o));
-                }
-                if (mark_obj["declarations"]) {
-                    mark_obj["declarations"].forEach(o => mark_stack.push(o));
-                }
-                if (mark_obj["expression"]) {
-                    mark_stack.push(mark_obj["expression"]);
-                }
-                */
             }
         }
         
@@ -329,102 +341,6 @@ class World{
          * 2. Grab from entities
          */
         this.sandbox = new Interpreter(polyfill_ast, initApi);
-        //let allbots = this.sandbox.getValueFromScope('ControllableEntity');
-        /*
-		let ControllableEntity = this.sandbox.getValueFromScope('ControllableEntity');
-		let ControllableEntityPrototype = this.sandbox.getProperty(ControllableEntity, 'prototype');
-		
-		let turnBase = function(entity, rot){
-			_this.actionBuffer.push({
-				"func" : function(data){
-					entity.rot += rot/10;
-					data.n++;
-					if(data.n >= 10){
-						entity.rot = data.target;
-						if(entity.rot < 0){
-							entity.rot = 3;
-						}
-						if(entity.rot > 3){
-							entity.rot = 0;
-						}
-						return false;
-					}
-					return true;
-				},
-				"data": {"n":0,"target":entity.rot+rot}
-			});
-		};
-		
-		this.sandbox.setValue([ControllableEntityPrototype, 'turnLeft'], this.sandbox.createNativeFunction(function(){
-			let name = this.properties.name;
-			let entity = _this.entities.filter(function(e){return e.inherits["ControllableEntity"]&&e.name==name})[0];
-			turnBase(entity, -1);
-			_this.snapTo = entity;
-		}));
-		
-		this.sandbox.setValue([ControllableEntityPrototype, 'turnRight'], this.sandbox.createNativeFunction(function(){
-			let name = this.properties.name;
-            let entity = _this.entities.filter(function (e) { return e.inherits["ControllableEntity"]&&e.name==name})[0];
-			turnBase(entity, 1);
-			_this.snapTo = entity;
-		}));
-		
-		this.sandbox.setValue([ControllableEntityPrototype, 'move'], this.sandbox.createNativeFunction(function(){
-			let name = this.properties.name;
-            let entity = _this.entities.filter(function (e) { return e.inherits["ControllableEntity"]&&e.name==name})[0];
-			//console.log("bot moved");
-			_this.actionBuffer.push({
-				func : function(data){
-					switch(entity.rot){
-						case 0:
-							entity.y += 0.1;
-							break;
-						case 1:
-							entity.x -= 0.1;
-							break;
-						case 2:
-							entity.y -= 0.1;
-							break;
-						case 3:
-							entity.x += 0.1;
-							break;
-					}
-                    data.n++;
-                    if (data.n < 10) {
-                        return true;
-                    }
-                    entity.x = Math.round(entity.x);
-                    entity.y = Math.round(entity.y);
-					return false;
-				},
-				data: {n:0, target:0}
-			});
-			_this.snapTo = entity;
-		}));
-		
-
-		this.sandbox.setValue([ControllableEntityPrototype, 'getPos'], this.sandbox.createNativeFunction(function(){
-			let name = this.properties.name;
-            let entity = _this.entities.filter(function (e) { return e.inherits["ControllableEntity"]&&e.name==name})[0];
-			return _this.sandbox.nativeToPseudo({x: entity.x, y: entity.y});
-		}));
-		
-		this.sandbox.setValue([ControllableEntityPrototype, 'getTile'], this.sandbox.createNativeFunction(function(){
-			let name = this.properties.name;
-            let entity = _this.entities.filter(function (e) { return e.inherits["ControllableEntity"]&&e.name==name})[0];
-			return _this.sandbox.nativeToPseudo(_this.terrain[entity.x][entity.y].data);
-		}));
-		
-		this.sandbox.setValue([ControllableEntityPrototype, 'dieInVietnam'], this.sandbox.createNativeFunction(function(){
-			document.body.innerHTML = "";
-			window.setInterval(function(){
-				document.body.innerHTML += " OOF";
-			});
-			window.setInterval(function(){
-				alert(document.body.innerHTML);
-			}, 5000);
-        }));
-        */
         this.sandbox.run();
         this.sandbox.appendCode(code);
 	}

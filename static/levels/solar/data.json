@@ -1,0 +1,1277 @@
+{
+	"tests": [
+		{
+			"entities": [],
+			"terrain": [
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 195.4
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 151.1
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 180.1
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 164.9
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 188.3
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 172.8
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 198.9
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 154.5
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 192.2
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 195.1
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 196.1
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 178.9
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 175.5
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 182.7
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 179.3
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 196.9
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 155.3
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 195.4
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 197.3
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 158.2
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 153.4
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 150.5
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 182.6
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 165.4
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 153.6
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 168.5
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 177.3
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 194.7
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 198.9
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 153
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 178
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 163.2
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				]
+			]
+		},
+		{
+			"entities": [],
+			"terrain": [
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 155.4
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 160.2
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 181.1
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 154.7
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 157.1
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 186
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 194.6
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 183.5
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 190.8
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 199.5
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 165.8
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 163.4
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 175
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 181.7
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 169.7
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 189.9
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 159.6
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 151.5
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 189.5
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 173
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 163.5
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 172
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 168.2
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 168.9
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 172.3
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 157.8
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 190.3
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 196.8
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 160.4
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 174.8
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 187.6
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 153.9
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				]
+			]
+		},
+		{
+			"entities": [],
+			"terrain": [
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 192.1
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 176.9
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 168.5
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 155.8
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 154.2
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 185.4
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 154.5
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 154.2
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 192.4
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 174.4
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 158.5
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 186.9
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 168.5
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 172.9
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 179.5
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 156
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 196.9
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 167
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 189.5
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 167.5
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 199.5
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 155.1
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 150.9
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 156.2
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 153.3
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 199.9
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 181.5
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 178.4
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 193.8
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 152.3
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 173.9
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "panel",
+						"visible_properties": {
+							"energy": 155.9
+						}
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				],
+				[
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					},
+					{
+						"tex": "dirt"
+					}
+				]
+			]
+		}
+	],
+	"tex": {
+		"rover": "/images/rover.png",
+		"dirt": "/images/mars.png",
+		"panel": "/images/panel.png"
+	},
+	"sfx": {},
+	"meta": {
+		"title": "Solar panels - Writing to Arrays",
+		"desc": "Learn how to write to an Array by reading solar panels"
+	}
+}

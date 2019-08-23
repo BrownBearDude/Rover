@@ -22,8 +22,17 @@
             </div>
         </div>
         <div id="editorPanel">
-            <button id="runButton" onclick="beginTests(this)">Start testing!</button>
-            <button id="resetButton" onclick="resetState(this)">Mr resetti</button>
+            <button id="runButton" onclick="beginTests(this)">Run code</button>
+            <button id="stepButton" onclick="draw()">Step code</button>
+            <button id="resetButton" onclick="resetState(this)">Reset</button>
+            <datalist id="speedSliderMarks">
+                <option value="0" label="0%">
+                <option value="2.5" label="0.5%">
+                <option value="5" label="1%">
+                <option value="7.5" label="5%">
+                <option value="10" label="10%">
+            </datalist>
+            <input id="speedSlider" type="range" min="0" max="10" step="0.5" onchange="changeSpeed(this)" list="speedSliderMarks">
         </div>
         <div id="infoDiv">
             <div id="infoPages">

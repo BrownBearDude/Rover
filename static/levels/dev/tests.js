@@ -12,7 +12,7 @@ newTask("namespace", function(localStorage){
 		];
 		localStorage.debugCallAmount = 0;
 	}
-	var bot = entities.filter(function(e){return e.name == "rover" && e.inherits["ControllableEntity"]})[0];
+	var bot = entities.filter(function(e){return e.name == "rover" && e.inherits["Rover"]})[0];
 	if(bot.x == localStorage.targets[localStorage.index].x && bot.y == localStorage.targets[localStorage.index].y){
 		localStorage.index++;
 		if(localStorage.index >= localStorage.targets.length){
