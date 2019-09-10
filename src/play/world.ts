@@ -21,7 +21,6 @@ class World{
     failed: boolean;
     editorDeco: string[];
     desc: string[];
-    snapTo: any;
     tester: Tester;
     testResults: testResult[];
     sourceMapConsumer: sourceMap.SourceMapConsumer;
@@ -32,6 +31,8 @@ class World{
     prevRange: monaco.Range;
     callbacks: { [key: string]: (world: World) => void };
     sent_data: any
+    snapTo: any;
+    prevMouseIsPressed: boolean;
     constructor(worldID: string) {
         this.editorDeco = [];
         this.loaded = 0;
@@ -74,6 +75,7 @@ class World{
         let j = JSON.parse(json);
 		this.entities = j.tests[index].entities;
         this.terrain = j.tests[index].terrain;
+        this.snapTo = j.tests[index].snapTo; //If it's undefined, then in resets it. Otherwise, it snaps. We all good!
         if (this.tester) {
             this.tester.reset(this);
         }
@@ -218,11 +220,11 @@ class World{
             Rover: {
                 turn_left: function (entity) {
                     turnBase(entity, -1);
-                    _this.snapTo = entity;
+                    //_this.snapTo = entity;
                 },
                 turn_right: function (entity) {
                     turnBase(entity, 1);
-                    _this.snapTo = entity;
+                    //_this.snapTo = entity;
                 },
                 move: function (entity) {
                     _this.actionBuffer.push({
@@ -242,7 +244,10 @@ class World{
                                 if (!tile) {
                                     return false;
                                 }
-                                return true;
+                                if (tile.traversable !== undefined && !tile.traversable) {
+                                    return false;
+                                }
+                                return !_this.entities.filter(e => e.x == x && e.y == y && e != entity && e.inherits["Physical"] && e.inherits["Physical"].weight <= 5).length;
                             }
                             if (data.n == 0 && !traversable(entity.x + dir[entity.rot].x, entity.y + dir[entity.rot].y)) return false;
                             entity.x += dir[entity.rot].x / 10;
@@ -256,7 +261,7 @@ class World{
                         },
                         data: { n: 0 }
                     });
-                    _this.snapTo = entity;
+                    //_this.snapTo = entity;
                 },
                 sensor_read_forward_tile: function (entity) {
                     const dir = [
@@ -265,13 +270,33 @@ class World{
                         { x: 0, y: -1 },
                         { x: 1, y: 0 },
                     ];
-                    alert("yee");
+                    //alert("yee");
                     console.log(entity);
                     let column = _this.terrain[entity.x + dir[entity.rot].x]
                     if (!column) return _this.sandbox.nativeToPseudo({});
                     let tile = column[entity.y + dir[entity.rot].y];
                     if (!tile) return _this.sandbox.nativeToPseudo({});
                     return _this.sandbox.nativeToPseudo(tile.visible_properties || {});
+                }
+            },
+            IO_ports: {
+                forward_entity_name: function (entity) {
+                    //alert("sdsd");
+                    const dir = [
+                        { x: 0, y: 1 },
+                        { x: -1, y: 0 },
+                        { x: 0, y: -1 },
+                        { x: 1, y: 0 },
+                    ];
+                    let ent = _this.entities.filter(e => e.x == entity.x + dir[entity.rot].x && e.y == entity.y + dir[entity.rot].y)[0];
+                    //alert(ent ? ent.name : "");
+                    if (ent) return ent.name;
+                }
+            },
+            Data_storage: {
+                store: function (entity, args) {
+                    let data = args[0];
+                    entity.inherits.Data_storage.data = data;
                 }
             }
         }
@@ -301,12 +326,33 @@ class World{
             "               read_front_tile: function(){",
             "                   return request_action(RAW_ENTITY.name, 'Rover', 'sensor_read_forward_tile', arguments);",
             "               } ",
-            "           }",
+            "           };",
             "           return ENTITY; ",
+            "       },",
+            "       IO_ports: function(ENTITY, RAW_ENTITY){",
+            "           if (!ENTITY.port) ENTITY.port = {};",
+            "           ENTITY.port.send_data = function(data){", //Find entity to send data to, call its "on_get_data" method and throw exception otherwise
+            "               try {",
+            "                   var name = request_action(RAW_ENTITY.name, 'IO_ports', 'forward_entity_name', arguments);",
+            "                   _ALL_LINKED_ENTITIES.filter(function(e){return e._name == name})[0].on_get_data(data);",
+            "               } catch(e) {",//Find linked entity
+            "                   log(e);",
+            "                   var err = new Error('Data could not be transmitted.');",
+            "                   err.name = 'DataError';",
+            "                   throw err;",
+            "               }",
+            "           };",
+            "           return ENTITY;",
+            "       },",
+            "       Physical: function(ENTITY){return ENTITY},", //Dud function
+            "       Data_storage: function(ENTITY, RAW_ENTITY){",
+            "           if (!ENTITY.port) ENTITY.port = {};",
+            "           ENTITY.port.on_get_data = function(data){request_action(RAW_ENTITY.name, 'Data_storage', 'store', arguments)};",
+            "           return ENTITY;",
             "       }",
             "   }",
             "   var _ALL_LINKED_ENTITIES = _ALL_RAW_ENTITIES.map(function(RAW_ENTITY){",
-            "       var ENTITY = {};",
+            "       var ENTITY = {_name: RAW_ENTITY.name};",
             "       log('TEST');",
             "       for(var inherit in RAW_ENTITY.inherits){",
             "           log(ENTITY);",
@@ -328,18 +374,6 @@ class World{
                 Object.keys(mark_obj).forEach(k => mark_stack.push(mark_obj[k]));
             }
         }
-        
-        /*
-         * Frick, can't think of how to fix this.
-         * Problem is that "visible" entities that live in the interpreter are linked with "true" entities that are real.
-         * The problem arises when you want to access a normally "invisible" entity.
-         * Right now, they are invisible because they simply haven't been generated yet.
-         * That's not good.
-         * 
-         * Okay, I have a solution. ish.
-         * 1. Pre-generate all entities
-         * 2. Grab from entities
-         */
         this.sandbox = new Interpreter(polyfill_ast, initApi);
         this.sandbox.run();
         this.sandbox.appendCode(code);
@@ -367,10 +401,18 @@ class World{
             y: floor((mouseY - offset.y) / TILE_Y)
         };
 
-        if (!(mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height)) mouseTile = null;
-
+        if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+            if (mouseIsPressed && !this.prevMouseIsPressed && mouseButton === RIGHT && this.terrain[mouseTile.x] && this.terrain[mouseTile.x][mouseTile.y]) {
+                this.snapTo = mouseTile;
+            }
+        } else {
+            mouseTile = null;
+        }
 		for(let x = 0;x < this.terrain.length;x++){
-			for(let y = 0;y < this.terrain[x].length;y++){
+            for (let y = 0; y < this.terrain[x].length; y++){
+                if (this.terrain[x][y].tex_before) {
+                    this.terrain[x][y].tex_before.forEach(tex => image(this.tex[tex], x * TILE_X, y * TILE_Y, TILE_X, TILE_Y));
+                }
                 image(this.tex[this.terrain[x][y].tex], x * TILE_X, y * TILE_Y, TILE_X, TILE_Y);
 			}
         }
@@ -399,6 +441,7 @@ class World{
         
         pop();
         this.subdisplay_data = drawSubdisplay(this.subdisplay, this.subdisplay_data, mouseTile, this);
+        this.prevMouseIsPressed = mouseIsPressed;
     }
     on(name: string, callback: (world: World) => void) {
         this.callbacks[name] = callback;

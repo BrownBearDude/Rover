@@ -48,7 +48,19 @@ function setup() {
     (window as any).world = world;
     (window as any).editor = editor;
 }
-
+let stepWorld;
+function changeSpeed(btn: HTMLInputElement) {
+    stepWorld = function stepWorld() {
+        for (let i = 0; i < btn.valueAsNumber; i++) {
+            world.step(editor);
+        }
+    }
+}
+changeSpeed({ valueAsNumber: 1 } as HTMLInputElement);
+(window as any).changeSpeed = changeSpeed;
+(window as any).stepButtonPress = function stepButtonPress() {
+    world.step(editor);
+};
 function draw() {
 	if(world.ready() == "loading"){
 		return;
@@ -73,7 +85,7 @@ function draw() {
                 //(window as any).errorMSG = rewind(world.crashMSG);
             }
         } else {
-            world.step(editor);
+            stepWorld();
         }
 	}
     world.draw();
@@ -140,7 +152,10 @@ function resizeToFit(div){
             world.loadLevel(world.json, testSelectInput.valueAsNumber - 1);
             world.loadCode(editor.getValue());
         } else {
-            alert("YATTA");
+            if (confirm("You have completed this puzzle!\nPress OK to advance to the next puzzle.")) {
+                let next = (new URL(document.URL)).searchParams.get("nx").split("|");
+                window.open("/play/?map=" + next.shift() + "&nx=" + next.join("|"), "_self");
+            }
             (window as any).resetState();
         }
     });

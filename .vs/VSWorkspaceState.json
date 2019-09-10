@@ -3,10 +3,14 @@
     "",
     "\\@types",
     "\\@types\\@babel",
+    "\\editor",
     "\\src",
     "\\src\\lib",
     "\\src\\play",
-    "\\src\\play\\definitions"
+    "\\src\\play\\definitions",
+    "\\static",
+    "\\static\\levels",
+    "\\static\\levels\\variables"
   ],
   "SelectedNode": "\\src\\play\\world.ts",
   "PreviewInSolutionExplorer": false

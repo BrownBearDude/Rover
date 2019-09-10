@@ -1,0 +1,106 @@
+{
+  "tests": [
+    {
+      "snapTo": {
+        "x": 4,
+        "y": 0
+      },
+      "entities": [
+        {
+          "x": 4,
+          "y": 0,
+          "rot": 0,
+          "tex": "rover",
+          "name": "rover",
+          "inherits": {
+            "Accessible": [
+              "Bots"
+            ],
+            "Rover": {
+              "moveSFX": "move"
+            },
+            "IO_ports": true
+          }
+        },
+        {
+          "x": 8,
+          "y": 0,
+          "rot": 0,
+          "tex": "data_drive",
+          "name": "drive",
+          "inherits": {
+            "Physical": {
+              "weight": 999
+            },
+            "IO_ports": true,
+            "Data_storage": {
+
+            }
+          }
+        }
+      ],
+      "terrain": [
+        [
+          {
+            "tex_before": [ "dirt" ],
+            "tex": "rock",
+            "traversable": false
+          }
+        ],
+        [
+          {
+            "tex": "dirt"
+          }
+        ],
+        [
+          {
+            "tex": "dirt"
+          }
+        ],
+        [
+          {
+            "tex": "dirt"
+          }
+        ],
+        [
+          {
+            "tex": "dirt"
+          }
+        ],
+        [
+          {
+            "tex": "dirt"
+          }
+        ],
+        [
+          {
+            "tex": "dirt"
+          }
+        ],
+        [
+          {
+            "tex": "dirt"
+          }
+        ],
+        [
+          {
+            "tex": "dirt"
+          }
+        ]
+      ]
+    }
+  ],
+  "tex": {
+    "rover": "/images/rover.png",
+    "dirt": "/images/mars.png",
+    "rock": "/images/rock.png",
+    "data_drive": "/images/data_drive.png"
+  },
+  "sfx": {
+    "botMove": "/audio/"
+  },
+  "meta": {
+    "title": "Numbers, strings and things",
+    "desc": "Learn about variables and a few basic types of variables."
+  }
+}
