@@ -17,5 +17,6 @@ const options = {
   detailedReport: false, // Prints a detailed report of the bundles, assets, filesizes and times, defaults to false, reports are only printed if watch is disabled
   autoInstall: true, // Enable or disable auto install of missing dependencies found during bundling
 };
-
-(new Bundler(entryFiles, options)).bundle();
+const bundler = new Bundler(entryFiles, options);
+bundler.on('bundled', ()=>process.exit());
+bundler.bundle();
