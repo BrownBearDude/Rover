@@ -12,8 +12,8 @@ const entryFiles = Path.join(__dirname, './src/**/index.html');
 const options = {
   outDir: './dist', // The out directory to put the build files in, defaults to dist
   minify: true,
-  logLevel: 3, // 5 = save everything to a file, 4 = like 3, but with timestamps and additionally log http requests to dev server, 3 = log info, warnings & errors, 2 = log warnings & errors, 1 = log errors
-  detailedReport: false, // Prints a detailed report of the bundles, assets, filesizes and times, defaults to false, reports are only printed if watch is disabled
+  logLevel: 4, // 5 = save everything to a file, 4 = like 3, but with timestamps and additionally log http requests to dev server, 3 = log info, warnings & errors, 2 = log warnings & errors, 1 = log errors
+  detailedReport: true, // Prints a detailed report of the bundles, assets, filesizes and times, defaults to false, reports are only printed if watch is disabled
   autoInstall: true, // Enable or disable auto install of missing dependencies found during bundling
 };
 const bundler = new Bundler(entryFiles, options);
