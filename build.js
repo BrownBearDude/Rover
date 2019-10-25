@@ -18,5 +18,8 @@ const options = {
   autoInstall: true, // Enable or disable auto install of missing dependencies found during bundling
 };
 const bundler = new Bundler(entryFiles, options);
-bundler.on('bundled', ()=>process.exit());
+bundler.on('bundled', ()=>{
+	require('fs-extra').copySync("./static/", "./dist/");
+	process.exit();
+});
 bundler.bundle();
