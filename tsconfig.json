@@ -5,7 +5,6 @@
     "baseUrl": ".",
     "jsx": "react",
     "module": "ES6",
-    "outDir": "./dist",
     "paths": { "*": [ "@types/*", "node_modules/@types/*", "node_modules/*"] },
     "target": "es6"
   },

@@ -1,2 +1,2 @@
-@call parcel watch src/**/index.html
+@call parcel watch src/**/index.html --out-dir ./dist/
 @pause
