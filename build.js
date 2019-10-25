@@ -11,7 +11,6 @@ const entryFiles = Path.join(__dirname, './src/**/index.html');
 // Bundler options
 const options = {
   outDir: './dist', // The out directory to put the build files in, defaults to dist
-  publicUrl: './', // The url to serve on, defaults to '/'
   minify: true,
   logLevel: 3, // 5 = save everything to a file, 4 = like 3, but with timestamps and additionally log http requests to dev server, 3 = log info, warnings & errors, 2 = log warnings & errors, 1 = log errors
   detailedReport: false, // Prints a detailed report of the bundles, assets, filesizes and times, defaults to false, reports are only printed if watch is disabled
