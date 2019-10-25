@@ -1,15 +1,31 @@
 /// <reference types="./definitions/p5-global" />
-/// <reference types="./definitions/marked-global" />
 
-import * as monaco from "../../node_modules/monaco-editor/esm/vs/editor/editor.main";
+import * as monaco from "monaco-editor/esm/vs/editor/editor.main";
 import * as acorn from "../lib/acorn";
 
 import { SubWindow } from "./subwindow";
 import * as FileSystem from "./filesystem";
 import { World } from "./world";
-
+import { create_tutorial } from "./tutorial";
 import * as _initJS from "./initJS";
+import marked from "marked";
+import * as highlightjs from "highlightjs";
 _initJS.run();
+//import * as highlight from "../../node_modules/highlightjs/highlight.pack";
+marked.setOptions({
+    highlight: (code, lang, callback) => {
+        const pre_element = document.createElement("pre");
+        const code_element = document.createElement("code");
+        code_element.className = lang;
+        code_element.innerText = code;
+        pre_element.append(code_element);
+        highlightjs.highlightBlock(pre_element);
+        pre_element.classList.add("rounded-codeblock");
+        //pre_element.parentElement.parentElement.style.left = "1px";
+        //pre_element.parentElement.parentElement.style.position = "relative";
+        return pre_element.outerHTML;
+    }
+});
 
 (window as any).SubWindow = SubWindow;
 (window as any).FileSystem = FileSystem;
@@ -47,6 +63,9 @@ function setup() {
     world = new World(ID);
     (window as any).world = world;
     (window as any).editor = editor;
+    if ((new URL(document.URL)).searchParams.get("t")) {
+        create_tutorial();
+    }
 }
 let stepWorld;
 function changeSpeed(btn: HTMLInputElement) {
@@ -75,7 +94,13 @@ function draw() {
     }
 	if(!infoDiv && world.desc){
         infoDiv = document.querySelector("#content");
-        infoDiv.innerHTML = window.marked(world.desc[0]);
+        infoDiv.innerHTML = marked(world.desc[0]);
+        for (let i = 0; i < infoDiv.children.length; i++) {
+            if (infoDiv.children[i].tagName == "PRE") {
+                (infoDiv.children[i] as HTMLElement).style.left = "1px";
+                (infoDiv.children[i] as HTMLElement).style.position = "relative";
+            }
+        }
 	}
 	background(0);
     if (world.sandbox) {

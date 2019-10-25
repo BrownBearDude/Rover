@@ -1,11 +1,21 @@
-#editor{
-	position: absolute;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	width: calc(100%/3);
-	height: 80%;
+@import '~highlight.js/scss/monokai.scss';
+
+.rounded-codeblock {
+    border-radius: 5px;
+    border: solid;
+    border-width: 1px;
+    border-color: black;
+    left: 50px;
+}
+
+#editor {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: calc(100%/3);
+    height: 80%;
 }
 
 #gameDiv{

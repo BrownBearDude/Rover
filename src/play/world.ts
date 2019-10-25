@@ -5,7 +5,6 @@ import * as monaco from "../../node_modules/monaco-editor/esm/vs/editor/editor.m
 import { Tester, testResult } from "./tester";
 import * as Babel from "@babel/standalone";
 import * as sourceMap from "../../node_modules/source-map/source-map";
-import { string, object } from "prop-types";
 
 class World{
     //Todos: Define interfaces for entites, terrain, etc

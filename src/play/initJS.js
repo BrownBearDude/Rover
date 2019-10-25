@@ -1,4 +1,4 @@
-import * as sourceMap from "../../node_modules/source-map/source-map";
+import * as sourceMap from "source-map/source-map";
 //import * as Interpreter from "../lib/interpreter";
 function run() {
     //window['Interpreter'] = Interpreter;
