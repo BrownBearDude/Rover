@@ -2,21 +2,21 @@ Loops - Doing things more than once
 ===========
 There are two basic types of loops: `for` loops and `while` loops.
 `while` loops repeat so long as a condition is true.
-```js
+```javascript
 while(some_condition){
 	//While some_condition is true,
 	//repeat whatever is in here
 }
 ```
 This will move the bot forever
-```js
+```javascript
 while(true){ //true is always true
 	Bots["rover"].move();
 }
 ```
 `for` loops are a bit more complicated.
 They allow you to declare an initial expression, a condition and an increment expression.
-```js
+```javascript
 for([initial_expression];condition;[increment_expression]){
 	/*
 		1. Executes initial_expression
@@ -28,7 +28,7 @@ for([initial_expression];condition;[increment_expression]){
 }
 ```
 This will move the bots five steps forward
-```js
+```javascript
 for(var steps = 0;steps < 5;steps = steps + 1){
 	//First declare steps
 	//If steps is less than five, do whatever is in here
