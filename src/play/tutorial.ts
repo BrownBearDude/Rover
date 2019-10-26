@@ -26,17 +26,17 @@ export function create_tutorial(): void {
             title: "Welcome!",
             text: "This tutorial will take you through how Rover works.",
             cutout: null,
-            style: "left: 50%; top: 50%; width: 25%; transform:translate(-50%, -50%);"
+            style: "left: 50%; top: 50%; width: 25%; transform: translate(-50%, -50%);"
         }, {
             title: "This is Rover",
             text: "Rover is a platform for learning code through interactive environments with immediate feedback. Just type in code and run it in our interactive environment.",
             cutout: null,
-            style: "left: 50%; top: 50%; width: 25%; transform:translate(-50%, -50%);"
+            style: "left: 50%; top: 50%; width: 25%; transform: translate(-50%, -50%);"
         }, {
             title: "The Environment",
             text: "This is the environment which you run your code in. You can control \"Bots\" in here through code.",
             cutout: document.getElementById("canvasContainer"),
-            style: "left: 50%; bottom: 1%; width: 25%; transform:translate(-50%, 0%);"
+            style: "left: 50%; bottom: 1%; width: 25%; transform: translate(-50%, 0%);"
         }
     ];
 

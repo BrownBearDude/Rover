@@ -415,7 +415,7 @@ class World{
 			}
         }
 
-        if (!mouseIsPressed && mouseTile) {
+        if (!(mouseIsPressed && mouseButton === LEFT) && mouseTile) {
             fill(0, 0, 100, 100);
             rect(mouseTile.x * TILE_X, mouseTile.y * TILE_Y, TILE_X, TILE_Y);
         } 
@@ -432,7 +432,7 @@ class World{
 			pop();
         });
 
-        if (mouseIsPressed && mouseTile) {
+        if (mouseIsPressed && mouseButton === LEFT && mouseTile) {
             fill(0, 100, 0, 100);
             rect(mouseTile.x * TILE_X, mouseTile.y * TILE_Y, TILE_X, TILE_Y);
         } 
