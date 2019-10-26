@@ -470,11 +470,9 @@ class SubDisplay {
         if (!this.info_panel_list) {
             this.info_panel_list = document.getElementById("infoPanelTaskList");
             this.tile_data = document.getElementById("infoPanelTileData");
-            world.tester.results.forEach(result => {
-                const e = document.createElement("li");
-                e.innerText = result.task;
-                this.info_panel_list.append(e);
-            });
+            for (let i = 0; i < world.tester.results.length; i++) {
+                this.info_panel_list.append(document.createElement("li"));
+            }
         }
         if (mouseTile) {
             let img: HTMLCanvasElement;
@@ -499,6 +497,7 @@ class SubDisplay {
             this.tile_data.style.display = "initial";
         } else {
             world.tester.results.forEach((result, i) => {
+                (this.info_panel_list.children[i] as HTMLElement).innerText = result.task;
                 (this.info_panel_list.children[i] as HTMLElement).style.color = result.passed ? "lawngreen" : "white";
             });
 
