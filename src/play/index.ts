@@ -39,7 +39,6 @@ let editor: monaco.editor.IStandaloneCodeEditor;
 
 function setup() {
     noSmooth();
-    canvasDiv = document.getElementById('canvasContainer');
 
     monaco.languages.typescript.javascriptDefaults.addExtraLib([
         "declare Bots: { [key: string]: Bot };",
@@ -57,9 +56,15 @@ function setup() {
         theme: 'vs-dark'
     });
 
-    let size : number[] = resizeToFit(canvasDiv);
-	createCanvas(size[0], size[1]).parent('canvasContainer');
-    let ID : string = (new URL(document.URL)).searchParams.get("map");
+    const canvas = createCanvas(32 * 10, 32 * 10).parent('canvasContainer').elt as HTMLCanvasElement;
+    function resize_canvas() {
+        canvas.style.width = Math.min(canvas.parentElement.offsetWidth, canvas.parentElement.offsetHeight) + "";
+        canvas.style.height = canvas.style.width;
+    }
+    resize_canvas();
+    window.addEventListener("resize", resize_canvas);
+
+    const ID : string = (new URL(document.URL)).searchParams.get("map");
     world = new World(ID);
     (window as any).world = world;
     (window as any).editor = editor;
@@ -116,20 +121,8 @@ function draw() {
     world.draw();
 }
 
-function windowResized() {
-    let size : number[] = resizeToFit(canvasDiv);
-    resizeCanvas(size[0], size[1]);
-    editor.layout();
-}
-
-function resizeToFit(div){
-    let n : number = Math.min(div.offsetWidth, div.offsetHeight);
-	return [n,n];
-}
-
 (window as any).setup = setup;
 (window as any).draw = draw;
-(window as any).windowResized = windowResized;
 
 (window as any).beginTests = function (ctx: HTMLButtonElement) {
     let parent: HTMLElement = document.getElementById("testSelect");

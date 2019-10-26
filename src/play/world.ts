@@ -456,6 +456,15 @@ class SubDisplay {
     ctx: CanvasRenderingContext2D;
     constructor() {
         this.ctx = (document.getElementById("infoPanelCanvas") as HTMLCanvasElement).getContext("2d");
+        this.ctx.canvas.style.left = "25%";
+        this.ctx.canvas.style.top = "50%";
+        this.ctx.canvas.style.transform = "translate(-50%, -50%)";
+        const update_canvas_size = () => {
+            this.ctx.canvas.style.width = Math.min(this.ctx.canvas.parentElement.clientWidth / 2, this.ctx.canvas.parentElement.clientHeight) + "px";
+            this.ctx.canvas.style.height = this.ctx.canvas.style.width;
+        };
+        window.addEventListener("resize", update_canvas_size);
+        update_canvas_size();
     }
     update(mouseTile: { x: number, y: number }, world: World) {
         if (!this.info_panel_list) {
@@ -478,7 +487,7 @@ class SubDisplay {
                 try {
                     img = (world.tex[world.terrain[mouseTile.x][mouseTile.y].tex] as any).canvas;
                 } catch (e) {
-
+                    //TODO
                 }
             }
 
@@ -486,7 +495,6 @@ class SubDisplay {
             if (img) {
                 this.ctx.drawImage(img, 0, 0);
             }
-
             this.info_panel_list.style.display = "none";
             this.tile_data.style.display = "initial";
         } else {
@@ -498,41 +506,6 @@ class SubDisplay {
             this.tile_data.style.display = "none";
         }
     }
-}
-
-function drawSubdisplay(ctx: CanvasRenderingContext2D, data: Object, mouseTile: { x: number, y: number }, world: World) {
-    if (data === undefined) data = { flickerClock: 0, barY: 0 };
-
-    //Clear canvas
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-
-    if (mouseTile) {
-        let imgCTX: HTMLCanvasElement;
-        if (mouseIsPressed) {
-            const entity = world.entities.filter(e => e.x == mouseTile.x && e.y == mouseTile.y)[0];
-            if (entity) {
-                imgCTX = (world.tex[entity.tex] as any).canvas;
-            }
-        } else {
-            try {
-                imgCTX = (world.tex[world.terrain[mouseTile.x][mouseTile.y].tex] as any).canvas;
-            } catch (e) {
-
-            }
-        }
-        if (imgCTX) {
-            ctx.drawImage(imgCTX, 0, (ctx.canvas.height - ctx.canvas.width / 3) / 2, ctx.canvas.width / 3, ctx.canvas.width / 3);
-        }
-    } else {
-        ctx.font = "10px Courier New";
-        ctx.textBaseline = "hanging"; 
-        world.tester.results.forEach((t, i) => {
-            ctx.fillStyle = t.passed ? "#00FF00" : "#FFFFFF";
-            ctx.fillText(t.task, 0, i * 10);
-        });
-    }
-    return data;
 }
 
 function rewind(error, stack: any[], code: string, offsetVal: number) {

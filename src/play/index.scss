@@ -36,6 +36,7 @@
     canvas {
         margin: auto;
         display: block;
+        image-rendering: pixelated, crisp-edges;
     }
 }
 
@@ -55,6 +56,19 @@
     height: 20%;
     width: 100%;
     background: #1F1F1F;
+}
+
+#infoPanelTileData {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+}
+
+#infoPanelCanvas {
+    position: absolute;
+    image-rendering: pixelated, crisp-edges;
 }
 
 #infoPanelTaskList {
