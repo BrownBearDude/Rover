@@ -48,7 +48,6 @@ export function create_tutorial(): void {
         element.style.borderColor = "black";
         element.style.borderWidth = "5px";
     }
-    set_tutorial_box_style(tutorial_box);
 
     const tutorial_box_title = document.createElement("p");
     tutorial_box_title.style.fontSize = "24px";

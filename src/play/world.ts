@@ -24,8 +24,7 @@ class World{
     testResults: testResult[];
     sourceMapConsumer: sourceMap.SourceMapConsumer;
     babelFR: any;
-    subdisplay: CanvasRenderingContext2D;
-    subdisplay_data: Object
+    subdisplay: SubDisplay;
     stackTrace: string;
     prevRange: monaco.Range;
     callbacks: { [key: string]: (world: World) => void };
@@ -63,7 +62,7 @@ class World{
         this.loadCount++;
         loadStrings("/levels/" + worldID + "/tests.js", test => { this.tester = new Tester(this, test.join("\n"));this.loaded++; }, () => this.failed = true);
         this.loaded++;
-        this.subdisplay = (document.getElementById("infoPanelCanvas") as HTMLCanvasElement).getContext("2d");
+        this.subdisplay = new SubDisplay();
     }
 	
 	ready(){
@@ -439,7 +438,7 @@ class World{
         } 
         
         pop();
-        this.subdisplay_data = drawSubdisplay(this.subdisplay, this.subdisplay_data, mouseTile, this);
+        this.subdisplay.update(mouseTile, this);
         this.prevMouseIsPressed = mouseIsPressed;
     }
     on(name: string, callback: (world: World) => void) {
@@ -450,6 +449,56 @@ class World{
     }
 }
 export { World };
+
+class SubDisplay {
+    tile_data: HTMLElement;
+    info_panel_list: HTMLElement;
+    ctx: CanvasRenderingContext2D;
+    constructor() {
+        this.ctx = (document.getElementById("infoPanelCanvas") as HTMLCanvasElement).getContext("2d");
+    }
+    update(mouseTile: { x: number, y: number }, world: World) {
+        if (!this.info_panel_list) {
+            this.info_panel_list = document.getElementById("infoPanelTaskList");
+            this.tile_data = document.getElementById("infoPanelTileData");
+            world.tester.results.forEach(result => {
+                const e = document.createElement("li");
+                e.innerText = result.task;
+                this.info_panel_list.append(e);
+            });
+        }
+        if (mouseTile) {
+            let img: HTMLCanvasElement;
+            if (mouseIsPressed) {
+                const entity = world.entities.filter(e => e.x == mouseTile.x && e.y == mouseTile.y)[0];
+                if (entity) {
+                    img = (world.tex[entity.tex] as any).canvas;
+                }
+            } else {
+                try {
+                    img = (world.tex[world.terrain[mouseTile.x][mouseTile.y].tex] as any).canvas;
+                } catch (e) {
+
+                }
+            }
+
+            this.ctx.clearRect(0, 0, 32, 32);
+            if (img) {
+                this.ctx.drawImage(img, 0, 0);
+            }
+
+            this.info_panel_list.style.display = "none";
+            this.tile_data.style.display = "initial";
+        } else {
+            world.tester.results.forEach((result, i) => {
+                (this.info_panel_list.children[i] as HTMLElement).style.color = result.passed ? "lawngreen" : "white";
+            });
+
+            this.info_panel_list.style.display = "initial";
+            this.tile_data.style.display = "none";
+        }
+    }
+}
 
 function drawSubdisplay(ctx: CanvasRenderingContext2D, data: Object, mouseTile: { x: number, y: number }, world: World) {
     if (data === undefined) data = { flickerClock: 0, barY: 0 };
@@ -482,31 +531,6 @@ function drawSubdisplay(ctx: CanvasRenderingContext2D, data: Object, mouseTile: 
             ctx.fillStyle = t.passed ? "#00FF00" : "#FFFFFF";
             ctx.fillText(t.task, 0, i * 10);
         });
-    }
-
-    //Draw overlay
-    ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
-    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-    data['flickerClock']++;
-    ctx.fillStyle = "rgba(255, 255, 255, " + (Math.random() / 100 / data['flickerClock']) + ")";
-    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-    if (data['flickerClock'] == 20) data['flickerClock'] = 0;
-
-    const bars = 50;
-    const barHeight = ctx.canvas.height / bars / 2;
-    ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-    for (let y = 0; y < bars; y++) {
-        ctx.fillRect(0, y * 2 * barHeight, ctx.canvas.width, barHeight);
-    }
-
-    ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
-
-    ctx.fillRect(0, data['barY'], ctx.canvas.width, ctx.canvas.height / 10);
-    data['barY']++;
-    if (data['barY'] > ctx.canvas.height * 2) {
-        data['barY'] = ctx.canvas.height / -10;
     }
     return data;
 }
