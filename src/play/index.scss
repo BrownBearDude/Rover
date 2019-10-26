@@ -36,7 +36,8 @@
     canvas {
         margin: auto;
         display: block;
-        image-rendering: pixelated, crisp-edges;
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
     }
 }
 
@@ -68,7 +69,8 @@
 
 #infoPanelCanvas {
     position: absolute;
-    image-rendering: pixelated, crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
 }
 
 #infoPanelTaskList {
