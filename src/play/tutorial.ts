@@ -26,27 +26,29 @@ export function create_tutorial(): void {
             title: "Welcome!",
             text: "This tutorial will take you through how Rover works.",
             cutout: null,
-            position: {
-                left: "50%",
-                top: "50%"
-            }
+            style: "left: 50%; top: 50%; width: 25%; transform:translate(-50%, -50%);"
         }, {
             title: "This is Rover",
-            text: "Rover is a platform for learning code through interactive environments with immediate feedback.",
+            text: "Rover is a platform for learning code through interactive environments with immediate feedback. Just type in code and run it in our interactive environment.",
             cutout: null,
-            position: {
-                left: "50%",
-                top: "50%"
-            }
+            style: "left: 50%; top: 50%; width: 25%; transform:translate(-50%, -50%);"
+        }, {
+            title: "The Environment",
+            text: "This is the environment which you run your code in. You can control \"Bots\" in here through code.",
+            cutout: document.getElementById("canvasContainer"),
+            style: "left: 50%; bottom: 1%; width: 25%; transform:translate(-50%, 0%);"
         }
     ];
 
     const tutorial_box = document.createElement("div");
-    tutorial_box.style.position = "absolute";
-    tutorial_box.style.backgroundColor = "grey";
-    tutorial_box.style.borderStyle = "solid";
-    tutorial_box.style.borderColor = "black";
-    tutorial_box.style.borderWidth = "5px";
+    function set_tutorial_box_style(element: HTMLElement) {
+        element.style.position = "absolute";
+        element.style.backgroundColor = "grey";
+        element.style.borderStyle = "solid";
+        element.style.borderColor = "black";
+        element.style.borderWidth = "5px";
+    }
+    set_tutorial_box_style(tutorial_box);
 
     const tutorial_box_title = document.createElement("p");
     tutorial_box_title.style.fontSize = "24px";
@@ -83,21 +85,20 @@ export function create_tutorial(): void {
 
     function render_box(index: number) {
         const box_data = tutorial[index];
-        tutorial_box.style.left = box_data.position.left;
-        tutorial_box.style.top = box_data.position.top;
+        tutorial_box.setAttribute("style", box_data.style);
+        set_tutorial_box_style(tutorial_box);
         tutorial_box_title.innerText = box_data.title;
         tutorial_box_text.innerText = box_data.text;
         cutout = box_data.cutout;
         tutorial_box_button_back.onclick = () => { if (index > 0) render_box(index - 1) };
         tutorial_box_button_next.onclick = () => index + 1 < tutorial.length ? render_box(index + 1) : finish_tutorial();
+        updateCanvas();
     }
 
     document.body.append(tutorial_box);
 
-    render_box(0);
-
     window.addEventListener("resize", updateCanvas);
-    updateCanvas();
+    render_box(0);
 
     function finish_tutorial() {
         window.removeEventListener("resize", updateCanvas);
@@ -109,9 +110,6 @@ export function create_tutorial(): void {
 interface tutorial_data {
     title: string,
     text: string,
-    cutout: HTMLElement
-    position: {
-        left: string,
-        top: string
-    }
+    cutout: HTMLElement,
+    style: string
 }
