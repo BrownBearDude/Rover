@@ -37,6 +37,13 @@ export function create_tutorial(): void {
             text: "This is the environment which you run your code in. You can control \"Bots\" in here through code.",
             cutout: document.getElementById("canvasContainer"),
             style: "left: 50%; bottom: 1%; width: 25%; transform: translate(-50%, 0%);"
+        }, {
+            title: "The Code",
+            text: "This is where you type in your code (JavaScript, to be precise). There are also a few buttons below. \"Run code\" runs the code you have typed. \"Step code\" goes through your code step by step. \"Reset\" stops running your code. The slider adjusts the speed of your code. ",
+            cutout: {
+                getBoundingClientRect: () => ({ left: 0, top: 0, width: window.innerWidth / 3, height: window.innerHeight})
+            } as HTMLElement,
+            style: "left: calc(100% / 6); top: 50%; width: 25%; transform: translate(-50%, -50%);"
         }
     ];
 
