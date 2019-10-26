@@ -478,7 +478,7 @@ class SubDisplay {
         }
         if (mouseTile) {
             let img: HTMLCanvasElement;
-            if (mouseIsPressed) {
+            if (mouseIsPressed && mouseButton === LEFT) {
                 const entity = world.entities.filter(e => e.x == mouseTile.x && e.y == mouseTile.y)[0];
                 if (entity) {
                     img = (world.tex[entity.tex] as any).canvas;
