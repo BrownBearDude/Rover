@@ -57,12 +57,39 @@ export function create_tutorial(): void {
     tutorial_box_text.style.margin = "4px";
     tutorial_box.append(tutorial_box_text);
 
+    const tutorial_box_buttons = document.createElement("div");
+    tutorial_box_buttons.style.left = "0px";
+    tutorial_box_buttons.style.right = "0px";
+
+    function new_tutorial_box_button(text: string) {
+        const button = document.createElement("button");
+        button.style.position = "relative";
+        button.style.top = "0px";
+        button.style.height = "100%";
+        button.style.width = "50%";
+        button.innerText = text;
+        return button;
+    }
+
+    const tutorial_box_button_back = new_tutorial_box_button("<");
+    tutorial_box_button_back.style.left = "0px";
+    tutorial_box_buttons.append(tutorial_box_button_back);
+
+    const tutorial_box_button_next = new_tutorial_box_button(">");
+    tutorial_box_button_next.style.right = "0px";
+    tutorial_box_buttons.append(tutorial_box_button_next);
+
+    tutorial_box.append(tutorial_box_buttons);
+
     function render_box(index: number) {
         const box_data = tutorial[index];
         tutorial_box.style.left = box_data.position.left;
         tutorial_box.style.top = box_data.position.top;
         tutorial_box_title.innerText = box_data.title;
         tutorial_box_text.innerText = box_data.text;
+        cutout = box_data.cutout;
+        tutorial_box_button_back.onclick = () => { if (index > 0) render_box(index - 1) };
+        tutorial_box_button_next.onclick = () => index + 1 < tutorial.length ? render_box(index + 1) : finish_tutorial();
     }
 
     document.body.append(tutorial_box);
@@ -71,6 +98,12 @@ export function create_tutorial(): void {
 
     window.addEventListener("resize", updateCanvas);
     updateCanvas();
+
+    function finish_tutorial() {
+        window.removeEventListener("resize", updateCanvas);
+        canvas.remove();
+        tutorial_box.remove();
+    }
 }
 
 interface tutorial_data {
