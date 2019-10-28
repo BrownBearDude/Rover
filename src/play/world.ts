@@ -441,6 +441,7 @@ class SubDisplay {
         this.ctx.canvas.style.left = "25%";
         this.ctx.canvas.style.top = "50%";
         this.ctx.canvas.style.transform = "translate(-50%, -50%)";
+        this.ctx.fillStyle = "rgb(128, 128, 128)";
         const update_canvas_size = () => {
             this.ctx.canvas.style.width = Math.min(this.ctx.canvas.parentElement.clientWidth / 2, this.ctx.canvas.parentElement.clientHeight) + "px";
             this.ctx.canvas.style.height = this.ctx.canvas.style.width;
@@ -471,7 +472,7 @@ class SubDisplay {
                 }
             }
 
-            this.ctx.clearRect(0, 0, 32, 32);
+            this.ctx.fillRect(0, 0, 32, 32);
             if (img) {
                 this.ctx.drawImage(img, 0, 0);
             }
