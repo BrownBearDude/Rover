@@ -18,7 +18,12 @@ const options = {
 };
 const bundler = new Bundler(entryFiles, options);
 bundler.on('bundled', ()=>{
-	require('fs-extra').copySync("./static/", "./dist/");
+	console.log('Copying "static" folder to build folder. . .');
+	const fs = require('fs-extra');
+	fs.copySync("./static/", "./dist/");
+	fs.outputJsonSync(Path.join(__dirname, './dist/build_data.json'), {"commit": process.env.COMMIT_REF});
+	console.log('Done building.');
 	process.exit();
 });
+console.log("Building for commit " + process.env.COMMIT_REF + ".");
 bundler.bundle();
