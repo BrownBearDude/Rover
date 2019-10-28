@@ -262,6 +262,7 @@ class World{
                     //_this.snapTo = entity;
                 },
                 sensor_read_forward_tile: function (entity) {
+                    alert("dvdv");
                     const dir = [
                         { x: 0, y: 1 },
                         { x: -1, y: 0 },
@@ -274,6 +275,7 @@ class World{
                     if (!column) return _this.sandbox.nativeToPseudo({});
                     let tile = column[entity.y + dir[entity.rot].y];
                     if (!tile) return _this.sandbox.nativeToPseudo({});
+                    console.log(tile);
                     return _this.sandbox.nativeToPseudo(tile.visible_properties || {});
                 }
             },
@@ -327,27 +329,7 @@ class World{
             "           };",
             "           return ENTITY; ",
             "       },",
-            "       IO_ports: function(ENTITY, RAW_ENTITY){",
-            "           if (!ENTITY.port) ENTITY.port = {};",
-            "           ENTITY.port.send_data = function(data){", //Find entity to send data to, call its "on_get_data" method and throw exception otherwise
-            "               try {",
-            "                   var name = request_action(RAW_ENTITY.name, 'IO_ports', 'forward_entity_name', arguments);",
-            "                   _ALL_LINKED_ENTITIES.filter(function(e){return e._name == name})[0].on_get_data(data);",
-            "               } catch(e) {",//Find linked entity
-            "                   log(e);",
-            "                   var err = new Error('Data could not be transmitted.');",
-            "                   err.name = 'DataError';",
-            "                   throw err;",
-            "               }",
-            "           };",
-            "           return ENTITY;",
-            "       },",
             "       Physical: function(ENTITY){return ENTITY},", //Dud function
-            "       Data_storage: function(ENTITY, RAW_ENTITY){",
-            "           if (!ENTITY.port) ENTITY.port = {};",
-            "           ENTITY.port.on_get_data = function(data){request_action(RAW_ENTITY.name, 'Data_storage', 'store', arguments)};",
-            "           return ENTITY;",
-            "       }",
             "   }",
             "   var _ALL_LINKED_ENTITIES = _ALL_RAW_ENTITIES.map(function(RAW_ENTITY){",
             "       var ENTITY = {_name: RAW_ENTITY.name};",

@@ -18,8 +18,7 @@
             ],
             "Rover": {
               "moveSFX": "move"
-            },
-            "IO_ports": true
+            }
           }
         },
         {
@@ -31,10 +30,6 @@
           "inherits": {
             "Physical": {
               "weight": 999
-            },
-            "IO_ports": true,
-            "Data_storage": {
-
             }
           }
         }
