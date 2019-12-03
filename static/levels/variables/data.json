@@ -7,9 +7,9 @@
       },
       "entities": [
         {
-          "x": 4,
+          "x": 0,
           "y": 0,
-          "rot": 0,
+          "rot": 3,
           "tex": "rover",
           "name": "rover",
           "inherits": {
@@ -25,13 +25,7 @@
       "terrain": [
         [
           {
-            "id": "rock",
-            "tex_before": [ "dirt" ],
-            "tex": "rock",
-            "traversable": false,
-            "visible_properties": {
-              "iron_content": 0.5
-            }
+            "tex": "dirt"
           }
         ],
         [ 
@@ -71,7 +65,13 @@
         ],
         [
           {
-            "tex": "dirt"
+            "id": "rock",
+            "tex_before": [ "dirt" ],
+            "tex": "rock",
+            "traversable": false,
+            "visible_properties": {
+              "iron_content": 0.5
+            }
           }
         ]
       ]
