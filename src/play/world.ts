@@ -70,6 +70,7 @@ class World{
 	}
 
     loadLevel(json: string, index: number) {
+        this.sent_data = undefined;
         let j = JSON.parse(json);
 		this.entities = j.tests[index].entities;
         this.terrain = j.tests[index].terrain;
@@ -103,8 +104,9 @@ class World{
                 .map(n => n.node)
                 .filter(n => n.start >= 0 && n.end >= 0);
             try {
-                this.sandbox.step();
-                //console.log("Stepped.");
+                do {
+                    if (!this.sandbox.step()) break;
+                } while (this.sandbox.stateStack[this.sandbox.stateStack.length - 1].node.__IS_POLYFILL__);                
             } catch (e) {
                 this.stackTrace = rewind(e, stack, _code, 0);
                 this.editorDeco = editor.deltaDecorations(this.editorDeco, [{
@@ -261,8 +263,7 @@ class World{
                     });
                     //_this.snapTo = entity;
                 },
-                sensor_read_forward_tile: function (entity) {
-                    alert("dvdv");
+                read_forward_tile: function (entity) {
                     const dir = [
                         { x: 0, y: 1 },
                         { x: -1, y: 0 },
@@ -270,12 +271,12 @@ class World{
                         { x: 1, y: 0 },
                     ];
                     //alert("yee");
-                    console.log(entity);
+                    //console.log(entity);
                     let column = _this.terrain[entity.x + dir[entity.rot].x]
                     if (!column) return _this.sandbox.nativeToPseudo({});
                     let tile = column[entity.y + dir[entity.rot].y];
                     if (!tile) return _this.sandbox.nativeToPseudo({});
-                    console.log(tile);
+                    //console.log(tile);
                     return _this.sandbox.nativeToPseudo(tile.visible_properties || {});
                 }
             },
@@ -307,7 +308,7 @@ class World{
             interpreter.setProperty(scope, "log", interpreter.createNativeFunction(function () { window.console.log(...arguments) }));
             interpreter.setProperty(scope, "_request_action", interpreter.createNativeFunction(_request_action));
             interpreter.setProperty(scope, "_ALL_RAW_ENTITIES", interpreter.nativeToPseudo(_this.entities));
-            interpreter.setProperty(scope, "send_data", interpreter.createNativeFunction(function (data) { _this.sent_data = data }));
+            interpreter.setProperty(scope, "send_data", interpreter.createNativeFunction(function (data) { _this.sent_data = interpreter.pseudoToNative(data); console.log(_this) }));
 		}
         const polyfill = [ //These functions are injected into the sandbox
             "var Bots = {};",
@@ -322,20 +323,14 @@ class World{
             "           ENTITY.turn_left = function(){return request_action(RAW_ENTITY.name, 'Rover', 'turn_left', arguments)};",
             "           ENTITY.turn_right = function(){return request_action(RAW_ENTITY.name, 'Rover', 'turn_right', arguments)};",
             "           ENTITY.move = function(){return request_action(RAW_ENTITY.name, 'Rover', 'move', arguments)};",
-            "           ENTITY.sensor = {",
-            "               read_front_tile: function(){",
-            "                   return request_action(RAW_ENTITY.name, 'Rover', 'sensor_read_forward_tile', arguments);",
-            "               } ",
-            "           };",
+            "           ENTITY.read_front_tile = function(){return request_action(RAW_ENTITY.name, 'Rover', 'read_forward_tile', arguments)};",
             "           return ENTITY; ",
             "       },",
             "       Physical: function(ENTITY){return ENTITY},", //Dud function
             "   }",
             "   var _ALL_LINKED_ENTITIES = _ALL_RAW_ENTITIES.map(function(RAW_ENTITY){",
             "       var ENTITY = {_name: RAW_ENTITY.name};",
-            "       log('TEST');",
             "       for(var inherit in RAW_ENTITY.inherits){",
-            "           log(ENTITY);",
             "           ENTITY = creators[inherit](ENTITY, RAW_ENTITY);",
             "       }",
             "       return ENTITY;",
@@ -345,12 +340,11 @@ class World{
             "_request_action = undefined;" //Remove native function
         ].join("\n");//"(function(){\n\t" +  + "\n})();"
         let polyfill_ast = (window as any).acorn.parse(polyfill, (Interpreter as any).PARSE_OPTIONS);
-        console.log("AST: ", polyfill_ast);
-        let mark_stack: Object[] = [polyfill_ast];
+        let mark_stack: any[] = [polyfill_ast];
         while (mark_stack.length) { //Dirty mark nodes
             let mark_obj = mark_stack.pop();
-            if (mark_obj && typeof mark_obj == "object" && !mark_obj["__IS_POLYFILL__"]) {
-                mark_obj["__IS_POLYFILL__"] = true;
+            if (mark_obj && typeof mark_obj == "object" && !mark_obj.__IS_POLYFILL__) {
+                mark_obj.__IS_POLYFILL__ = true;
                 Object.keys(mark_obj).forEach(k => mark_stack.push(mark_obj[k]));
             }
         }

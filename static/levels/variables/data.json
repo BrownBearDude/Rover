@@ -39,10 +39,13 @@
           {
             "tex_before": [ "dirt" ],
             "tex": "rock",
-            "traversable": false
+            "traversable": false,
+            "visible_properties": {
+              "iron_content": 0.5 
+            } 
           }
         ],
-        [
+        [ 
           {
             "tex": "dirt"
           }

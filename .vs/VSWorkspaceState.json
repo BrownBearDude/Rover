@@ -4,10 +4,12 @@
     "\\@types",
     "\\@types\\@babel",
     "\\src",
-    "\\src\\lib",
     "\\src\\play",
-    "\\src\\play\\definitions"
+    "\\src\\play\\definitions",
+    "\\static",
+    "\\static\\levels",
+    "\\static\\levels\\variables"
   ],
-  "SelectedNode": "\\src\\play\\world.ts",
+  "SelectedNode": "\\static\\levels\\variables\\tests.js",
   "PreviewInSolutionExplorer": false
 }

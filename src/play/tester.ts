@@ -1,4 +1,5 @@
 import * as acorn from "../lib/acorn";
+import { World } from "./world";
 interface testResult{
     task: string,
     passed: boolean
@@ -34,7 +35,7 @@ class Tester {
         //this.sandbox.run();
         return this.results;
     }
-    reset(world, again = true) {
+    reset(world: World, again = true) {
         const code = this.raw_code;
         const _this = this;
         const rootName: string = "_NATIVE_" + (Math.random() + "00000000000").slice(2, 12);
@@ -46,7 +47,13 @@ class Tester {
                 }));
                 interpreter.setProperty(scope, "entities", interpreter.nativeToPseudo(world.entities));
                 interpreter.setProperty(scope, "log", interpreter.createNativeFunction(console.log));
-                interpreter.setProperty(scope, "sent_data", sent_data);
+                interpreter.setProperty(scope, "sent_data", interpreter.nativeToPseudo(sent_data));
+                interpreter.setProperty(scope, "set_tile_data", interpreter.createNativeFunction(function (x, y, data) {
+                    world.terrain[x][y] = interpreter.pseudoToNative(data);
+                }));
+                interpreter.setProperty(scope, "get_tile_data", interpreter.createNativeFunction(function (x, y) {
+                    return interpreter.nativeToPseudo(world.terrain[x][y]);
+                }));
             }
             return initApi;
         }
