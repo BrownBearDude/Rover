@@ -1,4 +1,3 @@
-import * as acorn from "../lib/acorn";
 import { World } from "./world";
 interface testResult{
     task: string,

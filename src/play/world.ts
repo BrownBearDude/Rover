@@ -305,10 +305,10 @@ class World{
             function _request_action(entityName: string, className: string, funcName: string, args: IArguments) {
                 return _sandboxed_functionCalls[className][funcName](_this.entities.filter(entity => entity.name == entityName)[0], args);
             }
-            interpreter.setProperty(scope, "log", interpreter.createNativeFunction(function () { window.console.log(...arguments) }));
+            interpreter.setProperty(scope, "log", interpreter.createNativeFunction(function () { console.log(...arguments) }));
             interpreter.setProperty(scope, "_request_action", interpreter.createNativeFunction(_request_action));
             interpreter.setProperty(scope, "_ALL_RAW_ENTITIES", interpreter.nativeToPseudo(_this.entities));
-            interpreter.setProperty(scope, "send_data", interpreter.createNativeFunction(function (data) { _this.sent_data = interpreter.pseudoToNative(data) }));
+            interpreter.setProperty(scope, "send_data", interpreter.createNativeFunction(data => { _this.sent_data = interpreter.pseudoToNative(data) }));
 		}
         const polyfill = [ //These functions are injected into the sandbox
             "var Bots = {};",
