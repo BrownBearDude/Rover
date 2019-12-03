@@ -48,12 +48,26 @@ class Tester {
                 interpreter.setProperty(scope, "entities", interpreter.nativeToPseudo(world.entities));
                 interpreter.setProperty(scope, "log", interpreter.createNativeFunction(console.log));
                 interpreter.setProperty(scope, "sent_data", interpreter.nativeToPseudo(sent_data));
-                interpreter.setProperty(scope, "set_tile_data", interpreter.createNativeFunction(function (x, y, data) {
-                    world.terrain[x][y] = interpreter.pseudoToNative(data);
+                interpreter.setProperty(scope, "set_tile_from_id", interpreter.createNativeFunction((id, data) => {
+                    for (let x = 0; x < world.terrain.length; x++) {
+                        for (let y = 0; y < world.terrain[x].length; y++) {
+                            if (world.terrain[x][y].id === id) {
+                                world.terrain[x][y] = interpreter.pseudoToNative(data);
+                                return;
+                            }
+                        }
+                    }
                 }));
-                interpreter.setProperty(scope, "get_tile_data", interpreter.createNativeFunction(function (x, y) {
-                    return interpreter.nativeToPseudo(world.terrain[x][y]);
+                interpreter.setProperty(scope, "get_tile_from_id", interpreter.createNativeFunction(id => {
+                    for (let x = 0; x < world.terrain.length; x++) {
+                        for (let y = 0; y < world.terrain[x].length; y++) {
+                            if (world.terrain[x][y].id === id) {
+                                return interpreter.nativeToPseudo(world.terrain[x][y]);
+                            }
+                        }
+                    }
                 }));
+                interpreter.setProperty(scope, "random", interpreter.createNativeFunction(random));
             }
             return initApi;
         }

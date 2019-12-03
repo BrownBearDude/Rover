@@ -20,29 +20,18 @@
               "moveSFX": "move"
             }
           }
-        },
-        {
-          "x": 8,
-          "y": 0,
-          "rot": 0,
-          "tex": "data_drive",
-          "name": "drive",
-          "inherits": {
-            "Physical": {
-              "weight": 999
-            }
-          }
         }
       ],
       "terrain": [
         [
           {
+            "id": "rock",
             "tex_before": [ "dirt" ],
             "tex": "rock",
             "traversable": false,
             "visible_properties": {
-              "iron_content": 0.5 
-            } 
+              "iron_content": 0.5
+            }
           }
         ],
         [ 

@@ -308,7 +308,7 @@ class World{
             interpreter.setProperty(scope, "log", interpreter.createNativeFunction(function () { window.console.log(...arguments) }));
             interpreter.setProperty(scope, "_request_action", interpreter.createNativeFunction(_request_action));
             interpreter.setProperty(scope, "_ALL_RAW_ENTITIES", interpreter.nativeToPseudo(_this.entities));
-            interpreter.setProperty(scope, "send_data", interpreter.createNativeFunction(function (data) { _this.sent_data = interpreter.pseudoToNative(data); console.log(_this) }));
+            interpreter.setProperty(scope, "send_data", interpreter.createNativeFunction(function (data) { _this.sent_data = interpreter.pseudoToNative(data) }));
 		}
         const polyfill = [ //These functions are injected into the sandbox
             "var Bots = {};",

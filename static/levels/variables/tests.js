@@ -1,11 +1,10 @@
 newTask("namespace", function (localStorage) {
-    if (!localStorage.init) {
-        localStorage.init = true;
-        var data = get_tile_data(0, 0);
+    if (!localStorage.data) {
+        var data = get_tile_from_id("rock");
         if (typeof data.visible_properties != "object") data.visible_properties = {};
-        data.visible_properties.iron_content = 0.4;
-        set_tile_data(0, 0, data);
-        log(data);
+        data.visible_properties.iron_content = random();
+        set_tile_from_id("rock", data);
+        localStorage.data = data;
     }
    //log(sent_data);
 	return {
@@ -13,6 +12,6 @@ newTask("namespace", function (localStorage) {
         "passed":
             sent_data != null &&
             typeof sent_data == "object" &&
-            sent_data.iron_content === 0.4
+            sent_data.iron_content === localStorage.data.visible_properties.iron_content
 	};
 });
