@@ -137,7 +137,8 @@ function draw() {
     };
 
     let origLevel: Object = { l: testSelectInput.valueAsNumber - 1 };
-    (window as any).unlockFunc = function(){ //Create unlocking function
+    (window as any).unlockFunc = function () { //Create unlocking function
+        if (!originalState) return;
         editor.updateOptions({ readOnly: false });
         ctx.disabled = false;
         btnLeft.disabled = originalState.left;
@@ -145,6 +146,7 @@ function draw() {
         testSelectInput.value = originalState.origLevel;
         testSelectInput.disabled = false;
         originalState = undefined;
+        world.resetCallbacks();
         return origLevel;
     };
 
@@ -183,6 +185,7 @@ function draw() {
 };
 
 (window as any).resetState = function () {
+    if ((window as any).unlockFunc === undefined) return;
     let l = (window as any).unlockFunc().l;
     world.sandbox = undefined;
     world.stackTrace = undefined;
