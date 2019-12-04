@@ -1,11 +1,17 @@
-@import '~highlight.js/scss/monokai.scss';
+@import 'prismjs/themes/prism-dark.css';
+@import 'simplebar/dist/simplebar.css';
 
 .rounded-codeblock {
     border-radius: 5px;
     border: solid;
     border-width: 1px;
     border-color: black;
-    left: 50px;
+    background-color: #1e1e1e;
+
+    .simplebar-content:before,
+    .simplebar-content:after {
+        display: none;
+    }
 }
 
 #editor {
@@ -134,7 +140,7 @@ input[type=number] {
 }
 
 #content{
-	padding: 0;
+	padding: 2px;
 	margin: 0;
 	bottom: 0;
 	height: 95%;

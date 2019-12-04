@@ -9,18 +9,22 @@ import { World } from "./world";
 import { create_tutorial } from "./tutorial";
 import * as _initJS from "./initJS";
 import marked from "marked";
-import * as highlightjs from "highlightjs";
+import 'simplebar';
+import 'simplebar/dist/simplebar.css';
+import Prism from "prismjs";
 _initJS.run();
 //import * as highlight from "../../node_modules/highlightjs/highlight.pack";
 marked.setOptions({
-    highlight: (code, lang, callback) => {
+    highlight: (code, lang, _) => {
         const pre_element = document.createElement("pre");
         const code_element = document.createElement("code");
-        code_element.className = lang;
-        code_element.innerText = code;
         pre_element.append(code_element);
-        highlightjs.highlightBlock(pre_element);
+        code_element.innerHTML = Prism.highlight(code, Prism.languages.javascript, 'javascript');
         pre_element.classList.add("rounded-codeblock");
+        pre_element.setAttribute("data-simplebar", "data-simplebar");
+        code_element.style.left = "5px";
+        code_element.style.position = "relative";
+        //pre_element.style.position = "absolute";
         //pre_element.parentElement.parentElement.style.left = "1px";
         //pre_element.parentElement.parentElement.style.position = "relative";
         return pre_element.outerHTML;
@@ -100,12 +104,11 @@ function draw() {
 	if(!infoDiv && world.desc){
         infoDiv = document.querySelector("#content");
         infoDiv.innerHTML = marked(world.desc[0]);
-        for (let i = 0; i < infoDiv.children.length; i++) {
-            if (infoDiv.children[i].tagName == "PRE") {
-                (infoDiv.children[i] as HTMLElement).style.left = "1px";
-                (infoDiv.children[i] as HTMLElement).style.position = "relative";
-            }
-        }
+        /*
+        let elements = infoDiv.getElementsByClassName("rounded-codeblock");
+        for (let i = 0; i < elements.length; i++) {
+            new SimpleBar(elements[i] as HTMLElement);
+        }*/
 	}
 	background(0);
     if (world.sandbox) {
