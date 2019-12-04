@@ -93,6 +93,7 @@ class World{
 	}
 
     step(editor: monaco.editor.IStandaloneCodeEditor) {
+        this.sent_data = undefined;
         let _code = editor.getValue();
 		if(this.actionBuffer.length){
 			this.actionBuffer = this.actionBuffer.filter(f => f["func"](f["data"]));
