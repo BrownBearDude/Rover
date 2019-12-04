@@ -65,7 +65,7 @@
         ],
         [
           {
-            "id": "rock",
+            "tags": { "rock": true },
             "tex_before": [ "dirt" ],
             "tex": "rock",
             "traversable": false,

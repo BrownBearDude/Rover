@@ -1,10 +1,11 @@
 newTask("namespace", function (localStorage) {
-    if (!localStorage.data) {
-        var data = get_tile_from_id("rock");
-        if (typeof data.visible_properties != "object") data.visible_properties = {};
-        data.visible_properties.iron_content = random();
-        set_tile_from_id("rock", data);
-        localStorage.data = data;
+    if (!localStorage.tile) {
+        var data = get_tiles_from_tag("rock")[0];
+        var tile = data.tile;
+        if (typeof tile.visible_properties != "object") tile.visible_properties = {};
+        tile.visible_properties.iron_content = random();
+        update_tile(data);
+        localStorage.tile = tile;
     }
    //log(sent_data);
 	return {
@@ -12,6 +13,6 @@ newTask("namespace", function (localStorage) {
         "passed":
             sent_data != null &&
             typeof sent_data == "object" &&
-            sent_data.iron_content === localStorage.data.visible_properties.iron_content
+            sent_data.iron_content === localStorage.tile.visible_properties.iron_content
 	};
 });
