@@ -1,0 +1,239 @@
+{
+    "tests": [{
+		"snapTo": {
+			"x": 3,
+            "y": 3
+		},
+        "entities": [{
+            "x": 3,
+            "y": 3,
+            "rot": 0,
+            "tex": "rover",
+            "name": "rover",
+            "inherits": {
+                "Accessible": [
+                    "Bots"
+                ],
+                "Rover": {
+                    "moveSFX": "move"
+                }
+            }
+        }],
+        "terrain": [
+            [{
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "rock",
+                    "tags": {
+                        "rock1": true
+                    },
+                    "tex_before": ["dirt"],
+                    "traversable": false,
+                    "visible_properties": {
+                        "iron_content": 0.5
+                    }
+                },
+                {
+                    "tex": "rock",
+                    "tags": {
+                        "rock1": true
+                    },
+                    "tex_before": ["dirt"],
+                    "traversable": false,
+                    "visible_properties": {
+                        "iron_content": 0.5
+                    }
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                }
+            ],
+            [{
+                    "tex": "rock",
+                    "tags": {
+                        "rock1": true
+                    },
+                    "tex_before": ["dirt"],
+                    "traversable": false,
+                    "visible_properties": {
+                        "iron_content": 0.5
+                    }
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                }
+            ],
+            [{
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                }
+            ],
+            [{
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                }
+            ],
+            [{
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "rock",
+                    "tags": {
+                        "rock0": true
+                    },
+                    "tex_before": ["dirt"],
+                    "traversable": false,
+                    "visible_properties": {
+                        "iron_content": 0.5
+                    }
+                }
+            ],
+            [{
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "rock",
+                    "tags": {
+                        "rock0": true
+                    },
+                    "tex_before": ["dirt"],
+                    "traversable": false,
+                    "visible_properties": {
+                        "iron_content": 0.5
+                    }
+                }
+            ],
+            [{
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "dirt"
+                },
+                {
+                    "tex": "rock",
+                    "tags": {
+                        "rock0": true
+                    },
+                    "tex_before": ["dirt"],
+                    "traversable": false,
+                    "visible_properties": {
+                        "iron_content": 0.5
+                    }
+                },
+                {
+                    "tex": "dirt"
+                }
+            ]
+        ]
+    }],
+    "tex": {
+        "rover": "/images/rover.png",
+        "dirt": "/images/mars.png",
+        "rock": "/images/rock.png"
+    },
+    "sfx": {
+        "botMove": "/audio/"
+    },
+    "meta": {
+        "title": "Getting started",
+        "desc": "Learn the basics of javascript and how to control a bot"
+    }
+}

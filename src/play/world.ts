@@ -93,13 +93,13 @@ class World{
 	}
 
     step(editor: monaco.editor.IStandaloneCodeEditor) {
-        this.sent_data = undefined;
         let _code = editor.getValue();
 		if(this.actionBuffer.length){
 			this.actionBuffer = this.actionBuffer.filter(f => f["func"](f["data"]));
         } else if (this.sandbox) {
             const deco_options = { inlineClassName: "codeActivity" };
             this.testResults = this.tester.test(this.sent_data);
+            this.sent_data = undefined;
             //console.log(this.editorDeco);
             let stack = this.sandbox.stateStack
                 .map(n => n.node)

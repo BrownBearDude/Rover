@@ -1,0 +1,137 @@
+{
+  "tests": [
+    {
+	  "snapTo": {
+		"x": 4,
+		"y": 1
+	  },
+      "entities": [
+        {
+          "x": 0,
+          "y": 0,
+          "rot": 3,
+          "tex": "rover",
+          "name": "rover",
+          "inherits": {
+            "Accessible": [
+              "Bots"
+            ],
+            "Rover": {
+              "moveSFX": "move"
+            }
+          }
+        }
+      ],
+      "terrain": [
+        [
+          {
+            "tex": "dirt"
+          },{
+            "tex": "empty",
+            "traversable": false
+          },{
+            "tex": "empty",
+            "traversable": false
+          }
+        ],
+        [
+          {
+            "tex": "dirt"
+          },{
+            "tex": "empty",
+            "traversable": false
+          },{
+            "tex": "empty",
+            "traversable": false
+          }
+        ],
+        [
+          {
+            "tex": "dirt"
+          },{
+            "tex": "empty",
+            "traversable": false
+          },{
+            "tex": "empty",
+            "traversable": false
+          }
+        ],
+        [
+          {
+            "tex": "dirt"
+          },{
+            "tex": "empty",
+            "traversable": false
+          },{
+            "tex": "empty",
+            "traversable": false
+          }
+        ],
+        [
+          {
+            "tex": "dirt"
+          },{
+            "tex": "dirt"
+          },{
+            "tex": "dirt"
+          }
+        ],
+        [
+          {
+            "tex": "empty",
+            "traversable": false
+          },{
+            "tex": "empty",
+            "traversable": false
+          },{
+            "tex": "dirt"
+          }
+        ],
+        [
+          {
+            "tex": "empty",
+            "traversable": false
+          },{
+            "tex": "empty",
+            "traversable": false
+          },{
+            "tex": "dirt"
+          }
+        ],
+        [
+          {
+            "tex": "empty",
+            "traversable": false
+          },{
+            "tex": "empty",
+            "traversable": false
+          },{
+            "tex": "dirt"
+          }
+        ],
+        [
+          {
+            "tex": "empty",
+            "traversable": false
+          },{
+            "tex": "empty",
+            "traversable": false
+          },{
+            "tex": "dirt"
+          }
+        ]
+      ]
+    }
+  ],
+  "tex": {
+    "rover": "/images/rover.png",
+    "dirt": "/images/mars.png"
+  },
+  "sfx": {
+    "botMove": "/audio/"
+  },
+  "meta": {
+	"title": "Oh how the turn tables",
+	"desc": "Movements part 2"
+  }
+}

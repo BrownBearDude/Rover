@@ -1,0 +1,92 @@
+{
+  "tests": [
+    {
+      "snapTo": {
+        "x": 4,
+        "y": 0
+      },
+      "entities": [
+        {
+          "x": 0,
+          "y": 0,
+          "rot": 3,
+          "tex": "rover",
+          "name": "rover",
+          "inherits": {
+            "Accessible": [
+              "Bots"
+            ],
+            "Rover": {
+              "moveSFX": "move"
+            }
+          }
+        }
+      ],
+      "terrain": [
+        [
+          {
+            "tex": "dirt"
+          }
+        ],
+        [ 
+          {
+            "tex": "dirt"
+          }
+        ],
+        [
+          {
+            "tex": "dirt"
+          }
+        ],
+        [
+          {
+            "tex": "dirt"
+          }
+        ],
+        [
+          {
+            "tex": "dirt"
+          }
+        ],
+        [
+          {
+            "tex": "dirt"
+          }
+        ],
+        [
+          {
+            "tex": "dirt"
+          }
+        ],
+        [
+          {
+            "tex": "dirt"
+          }
+        ],
+        [
+          {
+            "tags": { "rock": true },
+            "tex_before": [ "dirt" ],
+            "tex": "rock",
+            "traversable": false,
+            "visible_properties": {
+              "iron_content": 0.5
+            }
+          }
+        ]
+      ]
+    }
+  ],
+  "tex": {
+    "rover": "/images/rover.png",
+    "dirt": "/images/mars.png",
+    "rock": "/images/rock.png"
+  },
+  "sfx": {
+    "botMove": "/audio/"
+  },
+  "meta": {
+    "title": "Numbers, strings and things",
+    "desc": "Learn about variables and a few basic types of variables."
+  }
+}
