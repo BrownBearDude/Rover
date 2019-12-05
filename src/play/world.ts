@@ -13,7 +13,7 @@ class World{
     TILE: { X: () => number; Y: () => number; };
     entities: any[];
     terrain: any[][];
-    tex: { [key: string]: Image };
+    tex: Textures;
     json: any;
     sandbox: Interpreter; //Wut
     actionBuffer: Object[];
@@ -80,12 +80,12 @@ class World{
         }
         if (!this.tex) {
             //Means that this is the first time loading
-			this.tex = {};
+            this.tex = new Textures();
 			//console.log(json.tex);
             for (let name in j.tex) {
                 if (j.tex.hasOwnProperty(name)) {
                     this.loadCount++;
-                    loadImage(j.tex[name], img => { this.tex[name] = img; this.loaded++ });
+                    loadImage(j.tex[name], img => { this.tex.set(name, img); this.loaded++ });
                 }
             }
             window.document.title += " - " + j.meta.title;
@@ -386,9 +386,9 @@ class World{
 		for(let x = 0;x < this.terrain.length;x++){
             for (let y = 0; y < this.terrain[x].length; y++){
                 if (this.terrain[x][y].tex_before) {
-                    this.terrain[x][y].tex_before.forEach(tex => image(this.tex[tex], x * TILE_X, y * TILE_Y, TILE_X, TILE_Y));
+                    this.terrain[x][y].tex_before.forEach(tex => image(this.tex.get(tex), x * TILE_X, y * TILE_Y, TILE_X, TILE_Y));
                 }
-                image(this.tex[this.terrain[x][y].tex], x * TILE_X, y * TILE_Y, TILE_X, TILE_Y);
+                image(this.tex.get(this.terrain[x][y].tex), x * TILE_X, y * TILE_Y, TILE_X, TILE_Y);
 			}
         }
 
@@ -405,7 +405,7 @@ class World{
 			if(e.rot){
 				rotate(e.rot * 0.5 * PI);
 			}
-			image(this.tex[e.tex], 0, 0, TILE_X, TILE_Y);
+			image(this.tex.get(e.tex), 0, 0, TILE_X, TILE_Y);
 			pop();
         });
 
@@ -457,11 +457,11 @@ class SubDisplay {
             if (mouseIsPressed && mouseButton === LEFT) {
                 const entity = world.entities.filter(e => e.x == mouseTile.x && e.y == mouseTile.y)[0];
                 if (entity) {
-                    img = (world.tex[entity.tex] as any).canvas;
+                    img = (world.tex.get(entity.tex) as any).canvas;
                 }
             } else {
                 try {
-                    img = (world.tex[world.terrain[mouseTile.x][mouseTile.y].tex] as any).canvas;
+                    img = (world.tex.get(world.terrain[mouseTile.x][mouseTile.y].tex) as any).canvas;
                 } catch (e) {
                     //TODO
                 }
@@ -522,4 +522,27 @@ function toRowsAndColumns(code: string, start = 0, end = 0) {
         }
     }
     return {startLine, endLine, startChar, endChar};
+}
+
+class Textures {
+    private textures: { [key: string]: Image };
+    constructor() {
+        const errorGraphic = createGraphics(32, 32);
+        errorGraphic.background(255, 0, 255);
+        errorGraphic.noSmooth();
+        errorGraphic.noStroke();
+        errorGraphic.fill(0);
+        errorGraphic.rect(0, 0, 16, 16);
+        errorGraphic.rect(16, 16, 16, 16);
+        this.textures = {
+            error: (errorGraphic as any),
+            empty: createImage(32, 32)
+        };
+    }
+    public set(key: string, img: Image) {
+        this.textures[key] = img;
+    }
+    public get(key: string) {
+        return (this.textures[key] || this.textures["error"]);
+    }
 }

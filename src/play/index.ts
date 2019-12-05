@@ -2,7 +2,6 @@
 
 import * as monaco from "monaco-editor/esm/vs/editor/editor.main";
 import * as acorn from "../lib/acorn";
-
 import { SubWindow } from "./subwindow";
 import * as FileSystem from "./filesystem";
 import { World } from "./world";
@@ -10,8 +9,8 @@ import { create_tutorial } from "./tutorial";
 import * as _initJS from "./initJS";
 import marked from "marked";
 import 'simplebar';
-import 'simplebar/dist/simplebar.css';
 import Prism from "prismjs";
+import { EditorMode } from "./editormode";
 _initJS.run();
 //import * as highlight from "../../node_modules/highlightjs/highlight.pack";
 marked.setOptions({
@@ -68,12 +67,17 @@ function setup() {
     resize_canvas();
     window.addEventListener("resize", resize_canvas);
 
-    const ID : string = (new URL(document.URL)).searchParams.get("map");
+    const searchParams = (new URL(document.URL)).searchParams;
+    const ID: string = searchParams.get("map");
     world = new World(ID);
     (window as any).world = world;
     (window as any).editor = editor;
     if ((new URL(document.URL)).searchParams.get("t")) {
         create_tutorial();
+    }
+    if (searchParams.get("editorMode")) {
+        EditorMode.init_canvas(canvas);
+        EditorMode.init_world(world);
     }
 }
 let stepWorld;
@@ -219,6 +223,9 @@ function draw() {
     let testSelectInput: HTMLInputElement = parent.getElementsByClassName("testIndex")[0] as HTMLInputElement;
     testSelectInput.max = JSON.parse(world.json).tests.length + "";
     testSelectInput.min = "1";
+    if ((new URL(document.URL)).searchParams.get("editorMode")) {
+        EditorMode.init_editor(editor);
+    }  
 };
 
 function rewind(error) {
