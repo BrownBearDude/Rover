@@ -4,12 +4,11 @@
     "\\@types",
     "\\@types\\@babel",
     "\\src",
-    "\\src\\play",
     "\\src\\play\\definitions",
     "\\static",
     "\\static\\levels",
-    "\\static\\levels\\variables"
+    "\\static\\levels\\t"
   ],
-  "SelectedNode": "\\src\\play\\index.ts",
+  "SelectedNode": "\\static\\levels\\t\\data.json",
   "PreviewInSolutionExplorer": false
 }

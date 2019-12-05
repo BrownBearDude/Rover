@@ -1,90 +1,403 @@
 {
   "tests": [
     {
-	  "snapTo": {
-		"x": 4.5,
-		"y": 0
-	  },
-      "entities": [
+	"entities": [
         {
           "x": 0,
           "y": 0,
-          "rot": 3,
+          "rot": 0,
           "tex": "rover",
           "name": "rover",
           "inherits": {
-            "Accessible": [
-              "Bots"
-            ],
+			"Accessible": [
+				"Bots"
+			],
             "Rover": {
               "moveSFX": "move"
             }
           }
         }
       ],
+	  
       "terrain": [
-        [
-          {
-            "tex": "dirt"
-          }
-        ],
-        [
-          {
-            "tex": "dirt"
-          }
-        ],
-        [
-          {
-            "tex": "dirt"
-          }
-        ],
-        [
-          {
-            "tex": "dirt"
-          }
-        ],
-        [
-          {
-            "tex": "dirt"
-          }
-        ],
-        [
-          {
-            "tex": "dirt"
-          }
-        ],
-        [
-          {
-            "tex": "dirt"
-          }
-        ],
-        [
-          {
-            "tex": "dirt"
-          }
-        ],
-        [
-          {
-            "tex": "dirt"
-          }
-        ],
-        [
-          {
-            "tex": "dirt"
-          }
-        ]
+[
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  }
+]
+,
+[
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  }
+]
+,
+[
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  }
+]
+,
+[
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  }
+]
+,
+[
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  }
+]
+,
+[
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  }
+]
+,
+[
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  }
+]
+,
+[
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  }
+]
+,
+[
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "empty"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  }
+]
+,
+[
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  }
+]
+,
+[
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  }
+]
+,
+[
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  },
+  {
+    "tex": "dirt"
+  }
+]
       ]
     }
-  ],
-  "tex": {
-    "rover": "/images/rover.png",
-    "dirt": "/images/mars.png"
-  },
-  "sfx": {
-    "botMove": "/audio/"
-  },
-  "meta": {
-	"title": "Getting started",
-	"desc": "Learn the basics of javascript and how to control a bot"
-  }
+  ]
+,
+
+	"tex": {
+		"rover": "/images/rover.png",
+        "dirt": "/images/mars.png",
+        "rock": "/images/mars_rock.png",
+        "blank": "/images/blank.png",
+        "solar": "/images/panel.png",
+        "data": "/images/data_drive.png"
+	},
+	"sfx": {
+		"botMove": "/audio/"
+	},
+	"meta": {
+		"title": "Getting started",
+		"desc": "Learn the basics of javascript and how to control a bot"
+	}
+	
 }
